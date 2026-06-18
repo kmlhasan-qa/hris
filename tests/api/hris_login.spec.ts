@@ -3,13 +3,16 @@ import { generateTOTP } from '../../helpers/totp.helper';
 import { setAuthToken } from '../../helpers/token.store';
 
 const BASE_URL = 'https://hris.itmanage.com.au';
+const EMAIL = 'hris24@mailsac.com';
+const PASSWORD = 'Password01';
+const TOTP_SECRET = 'PVKTCWTH3PJTJRT7';
 
 
 test('TC-001 Successful Login + 2FA verify', async ({ request }) => {
   const response = await request.post(`${BASE_URL}/api/auth/login`, {
     data: {
-      email: 'hris24@mailsac.com',
-      password: 'Password01'
+      email: EMAIL,
+      password: PASSWORD
     }
   });
 
@@ -22,7 +25,7 @@ test('TC-001 Successful Login + 2FA verify', async ({ request }) => {
   expect(tempToken).toBeTruthy();
 
   // generate 2FA code using the provided secret
-  const secret = 'PVKTCWTH3PJTJRT7';
+  const secret = TOTP_SECRET;
   const code = generateTOTP(secret, 6);
   console.log('generated 2FA code:', code);
 
