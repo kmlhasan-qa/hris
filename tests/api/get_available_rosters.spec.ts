@@ -18,7 +18,6 @@ async function assertApiResponse(response: APIResponse) {
   return body;
 }
 
-test.describe('HRIS available rosters', () => {
   test('TC-001 Get available rosters with valid token returns 200 success', async ({ request }) => {
     const token = getAuthToken();
     test.skip(!token, 'Auth token not found; run tests/api/hris_login.spec.ts first to generate finalToken');
@@ -43,4 +42,4 @@ test.describe('HRIS available rosters', () => {
     expect(response.status()).toBe(401);
     await assertApiResponse(response);
   });
-});
+

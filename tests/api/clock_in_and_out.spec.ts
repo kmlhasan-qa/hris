@@ -45,7 +45,6 @@ async function assertClockOutResponse(response: APIResponse) {
   return body;
 }
 
-test.describe('HRIS attendance flow (clock-in -> clock-out)', () => {
   test('TC-001 Clock in then clock out when clock-in succeeds', async ({ request }) => {
     const token = getAuthToken();
     test.skip(!token, 'Auth token not found; run tests/api/login.spec.ts first to generate finalToken');
@@ -227,4 +226,3 @@ test.describe('HRIS attendance flow (clock-in -> clock-out)', () => {
     expect(response.status()).toBe(422);
     await assertClockOutResponse(response);
   });
-});

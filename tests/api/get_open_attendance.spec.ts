@@ -3,7 +3,6 @@ import { getAuthToken } from '../../helpers/token.store';
 
 const BASE_URL = 'https://hris.itmanage.com.au';
 
-test.describe('HRIS open attendance', () => {
   test('TC-001 Get open attendance with valid token returns 200 success', async ({ request }) => {
     const token = getAuthToken();
     test.skip(!token, 'Auth token not found; run tests/api/login.spec.ts first to generate finalToken');
@@ -37,4 +36,3 @@ test.describe('HRIS open attendance', () => {
     expect(response.status()).toBe(401);
     expect(body.error || body.message || body.reason).toBeTruthy();
   });
-});

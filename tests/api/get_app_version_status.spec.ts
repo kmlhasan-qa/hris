@@ -17,7 +17,6 @@ async function expectResponseSuccessOrError(response: APIResponse) {
   return body;
 }
 
-test.describe('HRIS app version status', () => {
   test('TC-001 Get app version status returns 200 success or error response', async ({ request }) => {
     const response = await request.get(`${BASE_URL}/api/app-version-status`);
 
@@ -29,4 +28,4 @@ test.describe('HRIS app version status', () => {
 
     await expectResponseSuccessOrError(response);
   });
-});
+
