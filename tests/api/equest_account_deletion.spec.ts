@@ -6,7 +6,7 @@ const BASE_URL = 'https://hris.itmanage.com.au';
 test.describe('HRIS employee profile', () => {
   test('TC-001 Request account deletion with valid token returns 200 or 409', async ({ request }) => {
     const token = getAuthToken();
-    test.skip(!token, 'Auth token not found; run tests/api/hris_login.spec.ts first to generate finalToken');
+    test.skip(!token, 'Auth token not found; run tests/api/login.spec.ts first to generate finalToken');
 
     const response = await request.post(`${BASE_URL}/api/account-deletion-requests`, {
       headers: {

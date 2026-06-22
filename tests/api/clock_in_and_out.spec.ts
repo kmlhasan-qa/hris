@@ -48,7 +48,7 @@ async function assertClockOutResponse(response: APIResponse) {
 test.describe('HRIS attendance flow (clock-in -> clock-out)', () => {
   test('TC-001 Clock in then clock out when clock-in succeeds', async ({ request }) => {
     const token = getAuthToken();
-    test.skip(!token, 'Auth token not found; run tests/api/hris_login.spec.ts first to generate finalToken');
+    test.skip(!token, 'Auth token not found; run tests/api/login.spec.ts first to generate finalToken');
 
     
     // Pre-check: see if an open attendance exists and close it first
