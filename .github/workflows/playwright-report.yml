@@ -58,9 +58,9 @@ jobs:
               {
                 "activityTitle": "Playwright test results",
                 "facts": [
-                  { "name": "Status", "value": "${STATUS}" },
-                  { "name": "Branch", "value": "${BRANCH}" },
-                  { "name": "Run Number", "value": "${RUN_NUMBER}" }
+                  { "name": "Status", "value": "$STATUS" },
+                  { "name": "Branch", "value": "$BRANCH" },
+                  { "name": "Run Number", "value": "$RUN_NUMBER" }
                 ]
               }
             ],
@@ -71,7 +71,7 @@ jobs:
                 "targets": [
                   {
                     "os": "default",
-                    "uri": "${RUN_URL}"
+                    "uri": "$RUN_URL"
                   }
                 ]
               }
