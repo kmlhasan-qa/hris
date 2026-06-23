@@ -28,36 +28,45 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
+      # ----------------------------
+      # Run Playwright tests
+      # ----------------------------
       - name: Run Playwright tests
-        run: npx playwright test --reporter=json > playwright-results.json
+        run: npx playwright test --reporter=json > playwright-report.json
         continue-on-error: true
 
+      # ----------------------------
+      # Parse results safely
+      # ----------------------------
       - name: Parse test results
         id: stats
         run: |
-          node -e "
+          node << 'EOF' > result.txt
           const fs = require('fs');
-          const data = JSON.parse(fs.readFileSync('playwright-results.json','utf8'));
 
-          let passed = 0;
-          let failed = 0;
+          const report = JSON.parse(fs.readFileSync('playwright-report.json','utf8'));
+          const stats = report.stats || {};
 
-          for (const suite of (data.suites || [])) {
-            for (const spec of (suite.specs || [])) {
-              for (const test of (spec.tests || [])) {
-                const status = test.results?.[0]?.status;
-                if (status === 'passed') passed++;
-                if (status === 'failed') failed++;
-              }
-            }
-          }
+          const passed = stats.expected || 0;
+          const failed = stats.unexpected || 0;
+          const skipped = stats.skipped || 0;
 
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `PASSED=${passed}\nFAILED=${failed}\n`);
-          "
+          console.log(passed);
+          console.log(failed);
+          console.log(skipped);
+          EOF
 
+          PASSED=$(sed -n '1p' result.txt)
+          FAILED=$(sed -n '2p' result.txt)
+          SKIPPED=$(sed -n '3p' result.txt)
+
+          echo "PASSED=$PASSED" >> $GITHUB_OUTPUT
+          echo "FAILED=$FAILED" >> $GITHUB_OUTPUT
+          echo "SKIPPED=$SKIPPED" >> $GITHUB_OUTPUT
+
+      # ----------------------------
+      # Upload HTML report artifact
+      # ----------------------------
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
         if: always()
@@ -65,6 +74,9 @@ jobs:
           name: playwright-report
           path: playwright-report/
 
+      # ----------------------------
+      # Notify Teams
+      # ----------------------------
       - name: Notify Teams
         if: always()
         env:
@@ -74,6 +86,7 @@ jobs:
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           PASSED: ${{ steps.stats.outputs.PASSED }}
           FAILED: ${{ steps.stats.outputs.FAILED }}
+          SKIPPED: ${{ steps.stats.outputs.SKIPPED }}
         run: |
           jq -n \
             --arg status "$STATUS" \
@@ -81,12 +94,13 @@ jobs:
             --arg run "$RUN_NUMBER" \
             --arg passed "$PASSED" \
             --arg failed "$FAILED" \
+            --arg skipped "$SKIPPED" \
             --arg url "$RUN_URL" '
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
               "summary": "Playwright Test Report",
-              "themeColor": "0076D7",
+              "themeColor": ($status == "success" ? "2ECC71" : "E74C3C"),
               "title": "Playwright Test Completed",
               "sections": [
                 {
@@ -96,7 +110,8 @@ jobs:
                     { "name": "Branch", "value": $branch },
                     { "name": "Run Number", "value": $run },
                     { "name": "Passed", "value": $passed },
-                    { "name": "Failed", "value": $failed }
+                    { "name": "Failed", "value": $failed },
+                    { "name": "Skipped", "value": $skipped }
                   ]
                 }
               ],
