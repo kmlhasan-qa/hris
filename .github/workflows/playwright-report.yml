@@ -29,6 +29,9 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Run Playwright tests
         run: npx playwright test
         continue-on-error: true
@@ -36,42 +39,21 @@ jobs:
       - name: Parse test results
         id: stats
         if: always()
+        shell: bash
         run: |
-          node << 'EOF'
-          const fs = require('fs');
+          PASSED=0
+          FAILED=0
+          SKIPPED=0
 
-          let passed = 0;
-          let failed = 0;
-          let skipped = 0;
+          if [ -f playwright-report.json ]; then
+            PASSED=$(jq '[.. | objects | select(.status? == "passed")] | length' playwright-report.json)
+            FAILED=$(jq '[.. | objects | select(.status? == "failed")] | length' playwright-report.json)
+            SKIPPED=$(jq '[.. | objects | select(.status? == "skipped")] | length' playwright-report.json)
+          fi
 
-          try {
-            const report = JSON.parse(fs.readFileSync('playwright-report.json', 'utf8'));
-
-            function walkSuites(suites = []) {
-              for (const suite of suites) {
-                for (const spec of suite.specs || []) {
-                  for (const test of spec.tests || []) {
-                    for (const result of test.results || []) {
-                      if (result.status === 'passed') passed++;
-                      else if (result.status === 'failed') failed++;
-                      else if (result.status === 'skipped') skipped++;
-                    }
-                  }
-                }
-
-                walkSuites(suite.suites || []);
-              }
-            }
-
-            walkSuites(report.suites || []);
-          } catch (e) {
-            console.log('Could not parse playwright-report.json:', e.message);
-          }
-
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `PASSED=${passed}\n`);
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `FAILED=${failed}\n`);
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `SKIPPED=${skipped}\n`);
-          EOF
+          echo "PASSED=$PASSED" >> $GITHUB_OUTPUT
+          echo "FAILED=$FAILED" >> $GITHUB_OUTPUT
+          echo "SKIPPED=$SKIPPED" >> $GITHUB_OUTPUT
 
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
@@ -90,6 +72,7 @@ jobs:
           PASSED: ${{ steps.stats.outputs.PASSED }}
           FAILED: ${{ steps.stats.outputs.FAILED }}
           SKIPPED: ${{ steps.stats.outputs.SKIPPED }}
+        shell: bash
         run: |
           jq -n \
             --arg status "$STATUS" \
@@ -104,7 +87,7 @@ jobs:
               "@context": "http://schema.org/extensions",
               "summary": "Playwright Test Report",
               "themeColor": (if $status == "success" then "2ECC71" else "E74C3C" end),
-              "title": "Playwright Test Completed",
+              "title": ("Playwright Test Completed - " + $status),
               "sections": [
                 {
                   "activityTitle": "Playwright test results",
@@ -114,14 +97,25 @@ jobs:
                     { "name": "Run Number", "value": $run },
                     { "name": "Passed", "value": $passed },
                     { "name": "Failed", "value": $failed },
-                    { "name": "Skipped", "value": $skipped }
+                    { "name": "Skipped", "value": $skipped },
+                    { "name": "Report", "value": "Available in GitHub Artifacts" }
                   ]
                 }
               ],
               "potentialAction": [
                 {
                   "@type": "OpenUri",
-                  "name": "Open GitHub Run (Artifacts + Report)",
+                  "name": "View on GitHub",
+                  "targets": [
+                    {
+                      "os": "default",
+                      "uri": $url
+                    }
+                  ]
+                },
+                {
+                  "@type": "OpenUri",
+                  "name": "View Report",
                   "targets": [
                     {
                       "os": "default",
