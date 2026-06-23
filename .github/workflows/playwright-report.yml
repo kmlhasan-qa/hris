@@ -38,3 +38,33 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+
+      - name: Notify Teams
+        if: always()
+        run: |
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "@type": "MessageCard",
+            "@context": "http://schema.org/extensions",
+            "summary": "Playwright Test Report",
+            "themeColor": "0076D7",
+            "title": "Playwright Test Completed",
+            "sections": [{
+              "facts": [
+                { "name": "Status", "value": "${{ job.status }}" },
+                { "name": "Branch", "value": "${{ github.ref_name }}" },
+                { "name": "Run Number", "value": "${{ github.run_number }}" }
+              ]
+            }],
+            "potentialAction": [{
+              "@type": "OpenUri",
+              "name": "Open GitHub Run",
+              "targets": [{
+                "os": "default",
+                "uri": "'"$RUN_URL"'"
+              }]
+            }]
+          }' \
+          ${{ secrets.TEAMS_WEBHOOK_URL }}
