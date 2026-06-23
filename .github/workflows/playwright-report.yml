@@ -7,7 +7,7 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   test:
@@ -20,53 +20,59 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # ----------------------------
-      # Run Playwright tests
-      # ----------------------------
       - name: Run Playwright tests
-        run: npx playwright test --reporter=json > playwright-report.json
+        run: npx playwright test
         continue-on-error: true
 
-      # ----------------------------
-      # Parse results safely
-      # ----------------------------
       - name: Parse test results
         id: stats
+        if: always()
         run: |
-          node << 'EOF' > result.txt
+          node << 'EOF'
           const fs = require('fs');
 
-          const report = JSON.parse(fs.readFileSync('playwright-report.json','utf8'));
-          const stats = report.stats || {};
+          let passed = 0;
+          let failed = 0;
+          let skipped = 0;
 
-          const passed = stats.expected || 0;
-          const failed = stats.unexpected || 0;
-          const skipped = stats.skipped || 0;
+          try {
+            const report = JSON.parse(fs.readFileSync('playwright-report.json', 'utf8'));
 
-          console.log(passed);
-          console.log(failed);
-          console.log(skipped);
+            function walkSuites(suites = []) {
+              for (const suite of suites) {
+                for (const spec of suite.specs || []) {
+                  for (const test of spec.tests || []) {
+                    for (const result of test.results || []) {
+                      if (result.status === 'passed') passed++;
+                      else if (result.status === 'failed') failed++;
+                      else if (result.status === 'skipped') skipped++;
+                    }
+                  }
+                }
+
+                walkSuites(suite.suites || []);
+              }
+            }
+
+            walkSuites(report.suites || []);
+          } catch (e) {
+            console.log('Could not parse playwright-report.json:', e.message);
+          }
+
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `PASSED=${passed}\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `FAILED=${failed}\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `SKIPPED=${skipped}\n`);
           EOF
 
-          PASSED=$(sed -n '1p' result.txt)
-          FAILED=$(sed -n '2p' result.txt)
-          SKIPPED=$(sed -n '3p' result.txt)
-
-          echo "PASSED=$PASSED" >> $GITHUB_OUTPUT
-          echo "FAILED=$FAILED" >> $GITHUB_OUTPUT
-          echo "SKIPPED=$SKIPPED" >> $GITHUB_OUTPUT
-
-      # ----------------------------
-      # Upload HTML report artifact
-      # ----------------------------
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
         if: always()
@@ -74,9 +80,6 @@ jobs:
           name: playwright-report
           path: playwright-report/
 
-      # ----------------------------
-      # Notify Teams
-      # ----------------------------
       - name: Notify Teams
         if: always()
         env:
@@ -95,12 +98,12 @@ jobs:
             --arg passed "$PASSED" \
             --arg failed "$FAILED" \
             --arg skipped "$SKIPPED" \
-            --arg url "$RUN_URL" '
-            {
+            --arg url "$RUN_URL" \
+            '{
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
               "summary": "Playwright Test Report",
-              "themeColor": ($status == "success" ? "2ECC71" : "E74C3C"),
+              "themeColor": (if $status == "success" then "2ECC71" else "E74C3C" end),
               "title": "Playwright Test Completed",
               "sections": [
                 {
@@ -118,7 +121,7 @@ jobs:
               "potentialAction": [
                 {
                   "@type": "OpenUri",
-                  "name": "Open GitHub Run (Report + Artifacts)",
+                  "name": "Open GitHub Run (Artifacts + Report)",
                   "targets": [
                     {
                       "os": "default",
@@ -127,5 +130,7 @@ jobs:
                   ]
                 }
               ]
-            }
-            ' | curl -H "Content-Type: application/json" -d @- "${{ secrets.TEAMS_WEBHOOK_URL }}"
+            }' | curl \
+              -H "Content-Type: application/json" \
+              -d @- \
+              "${{ secrets.TEAMS_WEBHOOK_URL }}"

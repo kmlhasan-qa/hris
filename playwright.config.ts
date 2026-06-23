@@ -6,7 +6,6 @@ export default defineConfig({
   globalSetup: require.resolve('./global-setup'),
 
   timeout: 30000,
-
   retries: 1,
 
   use: {
@@ -17,7 +16,10 @@ export default defineConfig({
     trace: 'on-first-retry'
   },
 
-    reporter: [['html', { open: 'never' }]],
+  reporter: [
+    ['html', { open: 'never' }],
+    ['json', { outputFile: 'playwright-report.json' }]
+  ],
 
   projects: [
     {
