@@ -28,10 +28,48 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      # ----------------------------
+      # Run tests with JSON output
+      # ----------------------------
       - name: Run Playwright tests
-        run: npx playwright test
+        run: npx playwright test --reporter=json > playwright-results.json
         continue-on-error: true
 
+      # ----------------------------
+      # Parse results (passed/failed)
+      # ----------------------------
+      - name: Parse test results
+        id: stats
+        run: |
+          node -e "
+          const fs = require('fs');
+
+          const data = JSON.parse(fs.readFileSync('playwright-results.json', 'utf8'));
+
+          let passed = 0;
+          let failed = 0;
+
+          const suites = data.suites || [];
+
+          for (const suite of suites) {
+            const specs = suite.specs || [];
+            for (const spec of specs) {
+              for (const test of spec.tests || []) {
+                const status = test.results?.[0]?.status;
+                if (status === 'passed') passed++;
+                if (status === 'failed') failed++;
+              }
+            }
+          }
+
+          require('fs').appendFileSync(process.env.GITHUB_OUTPUT,
+            `PASSED=${passed}\nFAILED=${failed}\n`
+          );
+          "
+
+      # ----------------------------
+      # Upload Playwright HTML report
+      # ----------------------------
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
         if: always()
@@ -39,6 +77,9 @@ jobs:
           name: playwright-report
           path: playwright-report/
 
+      # ----------------------------
+      # Notify Teams
+      # ----------------------------
       - name: Notify Teams
         if: always()
         env:
@@ -46,39 +87,43 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           RUN_NUMBER: ${{ github.run_number }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PASSED: ${{ steps.stats.outputs.PASSED }}
+          FAILED: ${{ steps.stats.outputs.FAILED }}
         run: |
           payload=$(cat <<EOF
-          {
-            "@type": "MessageCard",
-            "@context": "http://schema.org/extensions",
-            "summary": "Playwright Test Report",
-            "themeColor": "0076D7",
-            "title": "Playwright Test Completed",
-            "sections": [
-              {
-                "activityTitle": "Playwright test results",
-                "facts": [
-                  { "name": "Status", "value": "$STATUS" },
-                  { "name": "Branch", "value": "$BRANCH" },
-                  { "name": "Run Number", "value": "$RUN_NUMBER" }
-                ]
-              }
-            ],
-            "potentialAction": [
-              {
-                "@type": "OpenUri",
-                "name": "Open GitHub Run",
-                "targets": [
-                  {
-                    "os": "default",
-                    "uri": "$RUN_URL"
-                  }
-                ]
-              }
-            ]
-          }
-          EOF
-          )
+{
+  "@type": "MessageCard",
+  "@context": "http://schema.org/extensions",
+  "summary": "Playwright Test Report",
+  "themeColor": "0076D7",
+  "title": "Playwright Test Completed",
+  "sections": [
+    {
+      "activityTitle": "Playwright test results",
+      "facts": [
+        { "name": "Status", "value": "$STATUS" },
+        { "name": "Branch", "value": "$BRANCH" },
+        { "name": "Run Number", "value": "$RUN_NUMBER" },
+        { "name": "Passed", "value": "$PASSED" },
+        { "name": "Failed", "value": "$FAILED" }
+      ]
+    }
+  ],
+  "potentialAction": [
+    {
+      "@type": "OpenUri",
+      "name": "Open GitHub Run (Report & Artifacts)",
+      "targets": [
+        {
+          "os": "default",
+          "uri": "$RUN_URL"
+        }
+      ]
+    }
+  ]
+}
+EOF
+)
 
           curl -H "Content-Type: application/json" \
             -d "$payload" \
