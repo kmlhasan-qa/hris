@@ -90,7 +90,7 @@ jobs:
               "title": ("Playwright Test Completed - " + $status),
               "sections": [
                 {
-                  "activityTitle": "Playwright test results",
+                  "activityTitle": "Talentra API staging results",
                   "facts": [
                     { "name": "Status", "value": $status },
                     { "name": "Branch", "value": $branch },
@@ -98,7 +98,7 @@ jobs:
                     { "name": "Passed", "value": $passed },
                     { "name": "Failed", "value": $failed },
                     { "name": "Skipped", "value": $skipped },
-                    { "name": "Report", "value": "Available in GitHub Artifacts" }
+                    { "name": "Report", "value": "Available in GitHub Artifacts https://github.com/ictech-projects/qa_talentra/actions/workflows/playwright-report.yml" }
                   ]
                 }
               ],
