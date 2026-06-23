@@ -17,7 +17,7 @@ export default defineConfig({
     trace: 'on-first-retry'
   },
 
-  reporter: [['html', { open: 'never' }]],
+    reporter: [['html', { open: 'never' }]],
 
   projects: [
     {
