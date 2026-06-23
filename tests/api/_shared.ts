@@ -21,7 +21,7 @@ export function parseBody(response: APIResponse): Promise<any> {
 /** Skip the current test when no auth token is available, otherwise return it. */
 export function requireToken(): string {
   const token = getAuthToken();
-  test.skip(!token, 'Auth token not found; run tests/api/login.spec.ts first to generate finalToken');
+  test.skip(!token, 'Auth token not found; run tests/api/Auth/login.spec.ts first to generate finalToken');
   return token as string;
 }
 

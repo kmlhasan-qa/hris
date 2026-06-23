@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from './_shared';
+import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
 
 const ENDPOINT = '/api/account-deletion-requests';
 

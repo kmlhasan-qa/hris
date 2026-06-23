@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from './_shared';
+import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
 
 test('TC-001 Get open attendance with valid token returns 200 success', async ({ request }) => {
   const token = requireToken();

@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
-import { generateTOTP } from '../../helpers/totp.helper';
-import { setAuthToken } from '../../helpers/token.store';
-import { PRIMARY_ACCOUNT } from '../../helpers/config';
-import { BASE_URL, authHeaders, parseBody } from './_shared';
+import { generateTOTP } from '../../../helpers/totp.helper';
+import { setAuthToken } from '../../../helpers/token.store';
+import { PRIMARY_ACCOUNT } from '../../../helpers/config';
+import { BASE_URL, authHeaders, parseBody } from '../_shared';
 
 const loginAccounts = [PRIMARY_ACCOUNT];
 

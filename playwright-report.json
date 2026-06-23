@@ -64,13 +64,13 @@
   },
   "suites": [
     {
-      "title": "api/clock_in_and_out.spec.ts",
-      "file": "api/clock_in_and_out.spec.ts",
+      "title": "api/AccountDeletionRequest/request_account_deletion.spec.ts",
+      "file": "api/AccountDeletionRequest/request_account_deletion.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "TC-001 Clock in then clock out when clock-in succeeds",
+          "title": "TC-001 Request account deletion with valid token returns 200 or 409",
           "ok": true,
           "tags": [],
           "tests": [
@@ -84,13 +84,13 @@
               "status": "skipped"
             }
           ],
-          "id": "82ea088785298e47d074-5916dd8c969420b457b5",
-          "file": "api/clock_in_and_out.spec.ts",
-          "line": 69,
+          "id": "6bd8a6ac6f775cf9a4d6-21c62f0ded1c8032951b",
+          "file": "api/AccountDeletionRequest/request_account_deletion.spec.ts",
+          "line": 6,
           "column": 5
         },
         {
-          "title": "TC-002 Clock in with invalid token returns 401 unauthorized",
+          "title": "TC-002 Request account deletion with invalid token returns 401",
           "ok": true,
           "tags": [],
           "tests": [
@@ -104,124 +104,16 @@
               "status": "skipped"
             }
           ],
-          "id": "82ea088785298e47d074-38be66029f321d8755ec",
-          "file": "api/clock_in_and_out.spec.ts",
-          "line": 123,
-          "column": 5
-        },
-        {
-          "title": "TC-003 Clock in with missing required fields returns 422 validation error",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "82ea088785298e47d074-c714e4923de71a4bd3c5",
-          "file": "api/clock_in_and_out.spec.ts",
-          "line": 131,
-          "column": 5
-        },
-        {
-          "title": "TC-004 Clock out with invalid token returns 401 unauthorized",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "82ea088785298e47d074-d5001bb26c54ea6c6dd8",
-          "file": "api/clock_in_and_out.spec.ts",
-          "line": 140,
-          "column": 5
-        },
-        {
-          "title": "TC-005 Clock out with missing required fields returns 422 validation error",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "82ea088785298e47d074-edb5ca26270e4808e5fb",
-          "file": "api/clock_in_and_out.spec.ts",
-          "line": 147,
+          "id": "6bd8a6ac6f775cf9a4d6-ca7e790175e8d24b238c",
+          "file": "api/AccountDeletionRequest/request_account_deletion.spec.ts",
+          "line": 19,
           "column": 5
         }
       ]
     },
     {
-      "title": "api/forgot_password.spec.ts",
-      "file": "api/forgot_password.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "TC-001 Forgot Password - get OTP via email",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "828d23917d6ae1341368-868951a299f762762d21",
-          "file": "api/forgot_password.spec.ts",
-          "line": 28,
-          "column": 5
-        },
-        {
-          "title": "TC-002 Verify Reset Code - valid OTP",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "828d23917d6ae1341368-ba61a32c3e0e82bf5895",
-          "file": "api/forgot_password.spec.ts",
-          "line": 32,
-          "column": 5
-        }
-      ]
-    },
-    {
-      "title": "api/get_app_version_status.spec.ts",
-      "file": "api/get_app_version_status.spec.ts",
+      "title": "api/AppVersion/get_app_version_status.spec.ts",
+      "file": "api/AppVersion/get_app_version_status.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -240,16 +132,124 @@
               "status": "skipped"
             }
           ],
-          "id": "8d6bd541e559273a22e1-04d03006bfb356c5447a",
-          "file": "api/get_app_version_status.spec.ts",
+          "id": "033882b859bde338ed3e-b7641b7d4ffe500ee0f0",
+          "file": "api/AppVersion/get_app_version_status.spec.ts",
           "line": 4,
           "column": 5
         }
       ]
     },
     {
-      "title": "api/get_attendance_recap.spec.ts",
-      "file": "api/get_attendance_recap.spec.ts",
+      "title": "api/Attendance/clock_in_and_out.spec.ts",
+      "file": "api/Attendance/clock_in_and_out.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "TC-001 Clock in then clock out when clock-in succeeds",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3a917fb3a5b091d3c856-f13d59148db8f0a55e2f",
+          "file": "api/Attendance/clock_in_and_out.spec.ts",
+          "line": 69,
+          "column": 5
+        },
+        {
+          "title": "TC-002 Clock in with invalid token returns 401 unauthorized",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3a917fb3a5b091d3c856-51217f65d8ab4b291d1e",
+          "file": "api/Attendance/clock_in_and_out.spec.ts",
+          "line": 123,
+          "column": 5
+        },
+        {
+          "title": "TC-003 Clock in with missing required fields returns 422 validation error",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3a917fb3a5b091d3c856-d30e00c57986c756c9ba",
+          "file": "api/Attendance/clock_in_and_out.spec.ts",
+          "line": 131,
+          "column": 5
+        },
+        {
+          "title": "TC-004 Clock out with invalid token returns 401 unauthorized",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3a917fb3a5b091d3c856-23bba7d3d42030c8f7b2",
+          "file": "api/Attendance/clock_in_and_out.spec.ts",
+          "line": 140,
+          "column": 5
+        },
+        {
+          "title": "TC-005 Clock out with missing required fields returns 422 validation error",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3a917fb3a5b091d3c856-86eced1faaf4c76f4cc3",
+          "file": "api/Attendance/clock_in_and_out.spec.ts",
+          "line": 147,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "api/Attendance/get_attendance_recap.spec.ts",
+      "file": "api/Attendance/get_attendance_recap.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -268,7 +268,7 @@
               "status": "skipped"
             }
           ],
-          "id": "845811ec87a7f2cfbbf5-d31be24aeeeb30333187",
+          "id": "4bf81d8697aca4931d83-dc4d3883cd67ec2fcd0e",
           "file": "api/_shared.ts",
           "line": 52,
           "column": 7
@@ -288,7 +288,7 @@
               "status": "skipped"
             }
           ],
-          "id": "845811ec87a7f2cfbbf5-799cf8f07462395fd3e2",
+          "id": "4bf81d8697aca4931d83-343578f47e8de4cb2094",
           "file": "api/_shared.ts",
           "line": 60,
           "column": 7
@@ -296,8 +296,8 @@
       ]
     },
     {
-      "title": "api/get_attendance.spec.ts",
-      "file": "api/get_attendance.spec.ts",
+      "title": "api/Attendance/get_attendance.spec.ts",
+      "file": "api/Attendance/get_attendance.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -316,7 +316,7 @@
               "status": "skipped"
             }
           ],
-          "id": "032569a05a7c352e6704-f7099bdb00f43879a9c6",
+          "id": "1575da53718c38e7d6bf-b4bdeb049c695a6c29b4",
           "file": "api/_shared.ts",
           "line": 52,
           "column": 7
@@ -336,7 +336,7 @@
               "status": "skipped"
             }
           ],
-          "id": "032569a05a7c352e6704-fc8c47e19850ac4adcae",
+          "id": "1575da53718c38e7d6bf-df77a647a1df8afba6d0",
           "file": "api/_shared.ts",
           "line": 60,
           "column": 7
@@ -344,8 +344,8 @@
       ]
     },
     {
-      "title": "api/get_available_rosters.spec.ts",
-      "file": "api/get_available_rosters.spec.ts",
+      "title": "api/Attendance/get_available_rosters.spec.ts",
+      "file": "api/Attendance/get_available_rosters.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -364,7 +364,7 @@
               "status": "skipped"
             }
           ],
-          "id": "d286d02725372c9ed02f-4dc71175d2c4bc586cea",
+          "id": "ba84a2c4f84ae1130f33-c72c1f84bda16f824f7f",
           "file": "api/_shared.ts",
           "line": 52,
           "column": 7
@@ -384,7 +384,7 @@
               "status": "skipped"
             }
           ],
-          "id": "d286d02725372c9ed02f-4685e5c5d037eca35f36",
+          "id": "ba84a2c4f84ae1130f33-d1369da6df9dce58b400",
           "file": "api/_shared.ts",
           "line": 60,
           "column": 7
@@ -392,56 +392,8 @@
       ]
     },
     {
-      "title": "api/get_employee_profile.spec.ts",
-      "file": "api/get_employee_profile.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "TC-001 Get employee profile with valid final token returns 200",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "b965bd3534073b87dd03-db71bac1279043dfc18b",
-          "file": "api/get_employee_profile.spec.ts",
-          "line": 4,
-          "column": 5
-        },
-        {
-          "title": "TC-002 Get employee profile with invalid token returns 401",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "b965bd3534073b87dd03-c99b0146d32d2a97ffd7",
-          "file": "api/get_employee_profile.spec.ts",
-          "line": 13,
-          "column": 5
-        }
-      ]
-    },
-    {
-      "title": "api/get_open_attendance.spec.ts",
-      "file": "api/get_open_attendance.spec.ts",
+      "title": "api/Attendance/get_open_attendance.spec.ts",
+      "file": "api/Attendance/get_open_attendance.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -460,8 +412,8 @@
               "status": "skipped"
             }
           ],
-          "id": "2bb6c838d40514432d60-9414d388db3eaa022468",
-          "file": "api/get_open_attendance.spec.ts",
+          "id": "ad0cdf43665992c132b4-065a796d97dcdb757721",
+          "file": "api/Attendance/get_open_attendance.spec.ts",
           "line": 4,
           "column": 5
         },
@@ -480,16 +432,124 @@
               "status": "skipped"
             }
           ],
-          "id": "2bb6c838d40514432d60-6d690653ea46ad2237c4",
-          "file": "api/get_open_attendance.spec.ts",
+          "id": "ad0cdf43665992c132b4-e1f24df6384bacded9c3",
+          "file": "api/Attendance/get_open_attendance.spec.ts",
           "line": 18,
           "column": 5
         }
       ]
     },
     {
-      "title": "api/get_team_attendance.spec.ts",
-      "file": "api/get_team_attendance.spec.ts",
+      "title": "api/Attendance/get_team_attendance_detail.spec.ts",
+      "file": "api/Attendance/get_team_attendance_detail.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "TC-001 Get team attendance detail - success 200",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3c2bf669fcbc5c60e1db-8b535a36e24cb33641c4",
+          "file": "api/Attendance/get_team_attendance_detail.spec.ts",
+          "line": 17,
+          "column": 5
+        },
+        {
+          "title": "TC-002 Get team attendance detail - unauthorized 401",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3c2bf669fcbc5c60e1db-485bf9f6ada61748e182",
+          "file": "api/Attendance/get_team_attendance_detail.spec.ts",
+          "line": 25,
+          "column": 5
+        },
+        {
+          "title": "TC-003 Get team attendance detail - invalid department returns 400",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3c2bf669fcbc5c60e1db-6b3ab565ac9b8430d069",
+          "file": "api/Attendance/get_team_attendance_detail.spec.ts",
+          "line": 32,
+          "column": 5
+        },
+        {
+          "title": "TC-004 Get team attendance detail - not head of department returns 400",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3c2bf669fcbc5c60e1db-9f469c5f0a3b47f1862b",
+          "file": "api/Attendance/get_team_attendance_detail.spec.ts",
+          "line": 42,
+          "column": 5
+        },
+        {
+          "title": "TC-005 Get team attendance detail - validation error returns 422",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "3c2bf669fcbc5c60e1db-6ba3d6465e2280205abe",
+          "file": "api/Attendance/get_team_attendance_detail.spec.ts",
+          "line": 52,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "api/Attendance/get_team_attendance.spec.ts",
+      "file": "api/Attendance/get_team_attendance.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -508,9 +568,9 @@
               "status": "skipped"
             }
           ],
-          "id": "999920a0da5750a9aeed-bc5630bf8520a3bbfb5d",
-          "file": "api/get_team_attendance.spec.ts",
-          "line": 12,
+          "id": "c14c4e49f153c9c34cce-cc58b37a2a07a37f60c0",
+          "file": "api/Attendance/get_team_attendance.spec.ts",
+          "line": 13,
           "column": 5
         },
         {
@@ -528,9 +588,9 @@
               "status": "skipped"
             }
           ],
-          "id": "999920a0da5750a9aeed-9e5856d4180fe562bc0e",
-          "file": "api/get_team_attendance.spec.ts",
-          "line": 20,
+          "id": "c14c4e49f153c9c34cce-64e0f19e97c0d8d52164",
+          "file": "api/Attendance/get_team_attendance.spec.ts",
+          "line": 21,
           "column": 5
         },
         {
@@ -548,9 +608,9 @@
               "status": "skipped"
             }
           ],
-          "id": "999920a0da5750a9aeed-b0c52fbf30e4b7651b26",
-          "file": "api/get_team_attendance.spec.ts",
-          "line": 27,
+          "id": "c14c4e49f153c9c34cce-042d7038a0803d1ab210",
+          "file": "api/Attendance/get_team_attendance.spec.ts",
+          "line": 28,
           "column": 5
         },
         {
@@ -568,16 +628,16 @@
               "status": "skipped"
             }
           ],
-          "id": "999920a0da5750a9aeed-62bf2fc2d6c10756cd79",
-          "file": "api/get_team_attendance.spec.ts",
-          "line": 37,
+          "id": "c14c4e49f153c9c34cce-798ed05ef6b17b180e06",
+          "file": "api/Attendance/get_team_attendance.spec.ts",
+          "line": 38,
           "column": 5
         }
       ]
     },
     {
-      "title": "api/get_today_attendance.spec.ts",
-      "file": "api/get_today_attendance.spec.ts",
+      "title": "api/Attendance/get_today_attendance.spec.ts",
+      "file": "api/Attendance/get_today_attendance.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -596,7 +656,7 @@
               "status": "skipped"
             }
           ],
-          "id": "0e2167e81e18e2faac42-49ae7aff7fca202d3d01",
+          "id": "bf3ac45847da510e6ae8-5c372c2fdaf58466a274",
           "file": "api/_shared.ts",
           "line": 52,
           "column": 7
@@ -616,7 +676,7 @@
               "status": "skipped"
             }
           ],
-          "id": "0e2167e81e18e2faac42-5bf98ec0a8aee1ab59ca",
+          "id": "bf3ac45847da510e6ae8-1d25bc1abb58b185a1bc",
           "file": "api/_shared.ts",
           "line": 60,
           "column": 7
@@ -624,8 +684,8 @@
       ]
     },
     {
-      "title": "api/get_today_latest_attendance.spec.ts",
-      "file": "api/get_today_latest_attendance.spec.ts",
+      "title": "api/Attendance/get_today_latest_attendance.spec.ts",
+      "file": "api/Attendance/get_today_latest_attendance.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -644,7 +704,7 @@
               "status": "skipped"
             }
           ],
-          "id": "16e031c18fb4bd2f9a7e-a0fb37bec53ab136b6c0",
+          "id": "050af5f33b151da47895-c4b06ee25a081d863d26",
           "file": "api/_shared.ts",
           "line": 52,
           "column": 7
@@ -664,7 +724,7 @@
               "status": "skipped"
             }
           ],
-          "id": "16e031c18fb4bd2f9a7e-36e8cc74eb314d2532c9",
+          "id": "050af5f33b151da47895-d9b1a69091fcccc48340",
           "file": "api/_shared.ts",
           "line": 60,
           "column": 7
@@ -672,8 +732,8 @@
       ]
     },
     {
-      "title": "api/get_today_roster.spec.ts",
-      "file": "api/get_today_roster.spec.ts",
+      "title": "api/Attendance/get_today_roster.spec.ts",
+      "file": "api/Attendance/get_today_roster.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -692,7 +752,7 @@
               "status": "skipped"
             }
           ],
-          "id": "d0200e52f2c0bbdd21e3-ac74af10c22fe6cd4cfa",
+          "id": "42e4e6b37f5304cb72f1-a649ceb91d931e1f3b34",
           "file": "api/_shared.ts",
           "line": 52,
           "column": 7
@@ -712,7 +772,7 @@
               "status": "skipped"
             }
           ],
-          "id": "d0200e52f2c0bbdd21e3-6041993102d93f171902",
+          "id": "42e4e6b37f5304cb72f1-4b5daba2171e067c2152",
           "file": "api/_shared.ts",
           "line": 60,
           "column": 7
@@ -720,8 +780,104 @@
       ]
     },
     {
-      "title": "api/login.spec.ts",
-      "file": "api/login.spec.ts",
+      "title": "api/Auth/forgot_password.spec.ts",
+      "file": "api/Auth/forgot_password.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "TC-001 Forgot Password - get OTP via email",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8c513bb5eaf74a23b1da-0caf78de72468ce095fa",
+          "file": "api/Auth/forgot_password.spec.ts",
+          "line": 28,
+          "column": 5
+        },
+        {
+          "title": "TC-002 Verify Reset Code - valid OTP",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "8c513bb5eaf74a23b1da-078505b14b4ed57b237c",
+          "file": "api/Auth/forgot_password.spec.ts",
+          "line": 32,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "api/Auth/get_employee_profile.spec.ts",
+      "file": "api/Auth/get_employee_profile.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "TC-001 Get employee profile with valid final token returns 200",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "093ec670e60d719c3910-3f1e926c74c1af2880a2",
+          "file": "api/Auth/get_employee_profile.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "TC-002 Get employee profile with invalid token returns 401",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "093ec670e60d719c3910-c9713b646c4429340055",
+          "file": "api/Auth/get_employee_profile.spec.ts",
+          "line": 13,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "api/Auth/login.spec.ts",
+      "file": "api/Auth/login.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
@@ -740,68 +896,20 @@
               "status": "skipped"
             }
           ],
-          "id": "33cfb415603f83923173-96001b138d802d7c8a83",
-          "file": "api/login.spec.ts",
+          "id": "36cbbc14b1de99925b63-d9bb2a00221b14875fca",
+          "file": "api/Auth/login.spec.ts",
           "line": 10,
           "column": 7
-        }
-      ]
-    },
-    {
-      "title": "api/request_account_deletion.spec.ts",
-      "file": "api/request_account_deletion.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [
-        {
-          "title": "TC-001 Request account deletion with valid token returns 200 or 409",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "da18aab4f0da6567a690-3acfc276d8a78d1668f7",
-          "file": "api/request_account_deletion.spec.ts",
-          "line": 6,
-          "column": 5
-        },
-        {
-          "title": "TC-002 Request account deletion with invalid token returns 401",
-          "ok": true,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 30000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chromium",
-              "projectName": "chromium",
-              "results": [],
-              "status": "skipped"
-            }
-          ],
-          "id": "da18aab4f0da6567a690-dd05d28dce5ab6936192",
-          "file": "api/request_account_deletion.spec.ts",
-          "line": 19,
-          "column": 5
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-23T08:22:11.345Z",
-    "duration": 83.61500000000004,
+    "startTime": "2026-06-23T08:50:22.197Z",
+    "duration": 106.93900000000002,
     "expected": 0,
-    "skipped": 31,
+    "skipped": 36,
     "unexpected": 0,
     "flaky": 0
   }

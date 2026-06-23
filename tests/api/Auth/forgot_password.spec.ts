@@ -1,7 +1,7 @@
 import { test, expect, type APIRequestContext } from '@playwright/test';
-import { extractOTPFromMailTm, getLatestMailTmMessageId } from '../../helpers/mailtm.helper';
-import { MAILTM } from '../../helpers/config';
-import { BASE_URL } from './_shared';
+import { extractOTPFromMailTm, getLatestMailTmMessageId } from '../../../helpers/mailtm.helper';
+import { MAILTM } from '../../../helpers/config';
+import { BASE_URL } from '../_shared';
 
 const REGISTERED_EMAIL = MAILTM.email;
 const NEW_PASSWORD = 'NewPassword123!@#';

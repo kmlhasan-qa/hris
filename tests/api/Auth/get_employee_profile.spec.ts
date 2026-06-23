@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { BASE_URL, INVALID_TOKEN, authHeaders, requireToken, assertSuccessOrError } from './_shared';
+import { BASE_URL, INVALID_TOKEN, authHeaders, requireToken, assertSuccessOrError } from '../_shared';
 
 test('TC-001 Get employee profile with valid final token returns 200', async ({ request }) => {
   const token = requireToken();

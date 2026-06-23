@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from './_shared';
+import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
 
 const departmentPublicId = '01KNRT91HVAYXH3R235QB723YN';
 const query = 'from=2026-05-01&month=2026-05&to=2026-05-31';
+const notHeadDepartmentId = '01KN124C4AKWAED6V1JEP7P7K2';
 
 const teamUrl = (departmentId: string | number) =>
   `${BASE_URL}/api/attendances/team/${departmentId}?${query}`;
@@ -36,7 +37,7 @@ test('TC-003 Get team attendance - invalid department or not head returns 400', 
 
 test('TC-004 Get team attendance - not head of department returns 400', async ({ request }) => {
   const token = requireToken();
-  const res = await request.get(teamUrl('01KN124C4AKWAED6V1JEP7P7K2'), { headers: authHeaders(token, true) });
+  const res = await request.get(teamUrl(notHeadDepartmentId), { headers: authHeaders(token, true) });
 
   const body = await parseBody(res);
   console.log('team attendance not head response body:', body);
