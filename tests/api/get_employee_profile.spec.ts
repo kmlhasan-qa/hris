@@ -15,6 +15,7 @@ const BASE_URL = 'https://hris.itmanage.com.au';
 
     expect(response.status()).toBe(200);
     const body = await response.json().catch(() => ({}));
+    console.log('employee profile response body:', body);
     expect(body).toBeTruthy();
     if (typeof body.success !== 'undefined') expect(body.success).toBe(true);
     if (typeof body.status !== 'undefined') expect(String(body.status).toLowerCase()).toMatch(/success|ok/);

@@ -7,6 +7,11 @@ const TOKEN_FILE = path.resolve(process.cwd(), 'test-results', 'auth_token.json'
 
 export function setAuthToken(token: string) {
   try {
+    const existingToken = getAuthToken();
+    if (existingToken === token) {
+      return;
+    }
+
     fs.mkdirSync(path.dirname(TOKEN_FILE), { recursive: true });
     fs.writeFileSync(TOKEN_FILE, JSON.stringify({ token }, null, 2), { encoding: 'utf-8' });
   } catch (e) {

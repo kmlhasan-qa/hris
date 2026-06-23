@@ -6,10 +6,10 @@ const BASE_URL = 'https://hris.itmanage.com.au';
 
 const loginAccounts = [
   {
-    name: 'hris24',
-    email: 'hris24@mailsac.com',
-    password: 'Password01',
-    totpSecret: 'PVKTCWTH3PJTJRT7'
+    name: 'Automation Manager',
+    email: 'manager@mailsac.com',
+    password: 'Password01!',
+    totpSecret: '53YLFR3WAR2HKSG5'
   }
 ];
 

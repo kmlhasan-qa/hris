@@ -3,10 +3,10 @@ import { getAuthToken } from '../../helpers/token.store';
 
 const BASE_URL = 'https://hris.itmanage.com.au';
 const VALID_PAYLOAD = {
-  site_id: 23,
-  latitude: -7.320057,
-  longitude: 112.731791,
-  roster_id: 46,
+  site_id: 34,
+  latitude: 33.779159,
+  longitude: -84.42072,
+  roster_id: 33,
 };
 
 async function parseBody(response: APIResponse) {

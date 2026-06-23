@@ -1,9 +1,9 @@
 import { loginAndSaveAuthToken } from './helpers/auth.helper';
 
 const loginAccount = {
-  email: 'hris24@mailsac.com',
-  password: 'Password01',
-  totpSecret: 'PVKTCWTH3PJTJRT7',
+  email: 'manager@mailsac.com',
+  password: 'Password01!',
+  totpSecret: '53YLFR3WAR2HKSG5',
 };
 
 export default async function globalSetup() {
