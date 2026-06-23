@@ -1,31 +1,20 @@
-import { expect, Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
+import { UI_LOGIN } from './config';
 import { generateTOTP } from './totp.helper';
 
-const BASE_URL = 'https://hris.itmanage.com.au/login';
-const EMAIL = 'kamal@ictechnology.com.au';
-const PASSWORD = 'Password01';
-const TOTP_SECRET = 'SQGN3PT4AEMC56BS';
+/** Drive the browser login flow (email/password + TOTP) through to the dashboard. */
+export async function login(page: Page): Promise<void> {
+  await page.goto(UI_LOGIN.url);
 
-export async function login(page: Page) {
-  await page.goto(BASE_URL);
-
-  await page.getByRole('textbox', { name: 'Email address*' }).fill(EMAIL);
-  await page.getByRole('textbox', { name: 'Password*' }).fill(PASSWORD);
+  await page.getByRole('textbox', { name: 'Email address*' }).fill(UI_LOGIN.email);
+  await page.getByRole('textbox', { name: 'Password*' }).fill(UI_LOGIN.password);
   await page.getByRole('checkbox', { name: 'Remember me' }).check();
   await page.getByRole('button', { name: 'Sign in' }).click();
 
-  const totpInput = page.getByRole('textbox', {
-    name: 'Enter the 6-digit code from'
-  });
-
+  const totpInput = page.getByRole('textbox', { name: 'Enter the 6-digit code from' });
   await expect(totpInput).toBeVisible();
-
-  const otpCode = generateTOTP(TOTP_SECRET);
-  await totpInput.fill(otpCode);
+  await totpInput.fill(generateTOTP(UI_LOGIN.totpSecret));
 
   await page.getByRole('button', { name: 'Confirm sign in' }).click();
-
-  await expect(
-    page.getByRole('heading', { name: 'Dashboard' })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 }

@@ -1,33 +1,17 @@
 import { test, expect } from '@playwright/test';
-import { getAuthToken } from '../../helpers/token.store';
+import { BASE_URL, INVALID_TOKEN, authHeaders, requireToken, assertSuccessOrError } from './_shared';
 
-const BASE_URL = 'https://hris.itmanage.com.au';
+test('TC-001 Get employee profile with valid final token returns 200', async ({ request }) => {
+  const token = requireToken();
+  const response = await request.get(`${BASE_URL}/api/auth/profile`, { headers: authHeaders(token) });
 
-  test('TC-001 Get employee profile with valid final token returns 200', async ({ request }) => {
-    const token = getAuthToken();
-    test.skip(!token, 'Auth token not found; run tests/api/login.spec.ts first to generate finalToken');
+  expect(response.status()).toBe(200);
+  const body = await assertSuccessOrError(response);
+  console.log('employee profile response body:', body);
+});
 
-    const response = await request.get(`${BASE_URL}/api/auth/profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+test('TC-002 Get employee profile with invalid token returns 401', async ({ request }) => {
+  const response = await request.get(`${BASE_URL}/api/auth/profile`, { headers: authHeaders(INVALID_TOKEN) });
 
-    expect(response.status()).toBe(200);
-    const body = await response.json().catch(() => ({}));
-    console.log('employee profile response body:', body);
-    expect(body).toBeTruthy();
-    if (typeof body.success !== 'undefined') expect(body.success).toBe(true);
-    if (typeof body.status !== 'undefined') expect(String(body.status).toLowerCase()).toMatch(/success|ok/);
-    expect(body.data || body.user || body).toBeTruthy();
-  });
-
-  test('TC-002 Get employee profile with invalid token returns 401', async ({ request }) => {
-    const response = await request.get(`${BASE_URL}/api/auth/profile`, {
-      headers: {
-        Authorization: 'Bearer invalid-token',
-      },
-    });
-
-    expect(response.status()).toBe(401);
-  });
+  expect(response.status()).toBe(401);
+});

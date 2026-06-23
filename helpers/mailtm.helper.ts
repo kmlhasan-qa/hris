@@ -1,92 +1,57 @@
-import axios from 'axios';
+import axios, { type AxiosInstance } from 'axios';
+import { MAILTM } from './config';
 
-const MAILTM_BASE_URL = 'https://api.mail.tm';
-
-const EMAIL = 'hris001@web-library.net';
-const PASSWORD = 'Password';
-
-async function getMailTmToken(): Promise<string> {
-  const response = await axios.post(`${MAILTM_BASE_URL}/token`, {
-    address: EMAIL,
-    password: PASSWORD
+/** Authenticate against mail.tm and return a client with the bearer token attached. */
+async function authedClient(): Promise<AxiosInstance> {
+  const { data } = await axios.post(`${MAILTM.baseUrl}/token`, {
+    address: MAILTM.email,
+    password: MAILTM.password,
   });
-
-  return response.data.token;
-}
-
-async function getLatestMessage(token: string) {
-  const response = await axios.get(`${MAILTM_BASE_URL}/messages`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
+  return axios.create({
+    baseURL: MAILTM.baseUrl,
+    headers: { Authorization: `Bearer ${data.token}` },
   });
-
-  const messages = response.data['hydra:member'];
-
-  if (!messages.length) {
-    throw new Error('No emails found');
-  }
-
-  return messages[0];
 }
 
-async function getLatestMessageId(token: string): Promise<string | undefined> {
-  try {
-    const latestMessage = await getLatestMessage(token);
-    return latestMessage.id;
-  } catch (error) {
-    if (error instanceof Error && error.message === 'No emails found') {
-      return undefined;
-    }
-    throw error;
-  }
+/** Return the most recent message in the inbox, or null when it is empty. */
+async function fetchLatestMessage(client: AxiosInstance): Promise<any | null> {
+  const { data } = await client.get('/messages');
+  return data['hydra:member']?.[0] ?? null;
 }
 
-async function getMessageContent(token: string, messageId: string) {
-  const response = await axios.get(`${MAILTM_BASE_URL}/messages/${messageId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  return response.data;
-}
-
+/** Id of the newest message currently in the inbox (used as a "before" marker). */
 export async function getLatestMailTmMessageId(): Promise<string | undefined> {
-  const token = await getMailTmToken();
-  return getLatestMessageId(token);
+  const client = await authedClient();
+  const latest = await fetchLatestMessage(client);
+  return latest?.id;
 }
 
-export async function extractOTPFromMailTm(previousMessageId?: string): Promise<string> {
-  const token = await getMailTmToken();
-
+/** Poll the inbox for a new email and extract the first 6-digit OTP it contains. */
+export async function extractOTPFromMailTm(
+  previousMessageId?: string,
+  { attempts = 12, intervalMs = 5000 }: { attempts?: number; intervalMs?: number } = {},
+): Promise<string> {
+  const client = await authedClient();
   console.log('Logged into mail.tm');
 
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < attempts; i++) {
     try {
-      const latestMessage = await getLatestMessage(token);
-
-      if (previousMessageId && latestMessage.id === previousMessageId) {
-        console.log('Waiting for new email...');
-      } else {
-        const message = await getMessageContent(token, latestMessage.id);
-
-        const body =
-          message.text || message.html?.join(' ') || '';
-
+      const latest = await fetchLatestMessage(client);
+      if (latest && latest.id !== previousMessageId) {
+        const { data: message } = await client.get(`/messages/${latest.id}`);
+        const body = message.text || message.html?.join(' ') || '';
         console.log('Email body:', body);
 
         const otpMatch = body.match(/\b\d{6}\b/);
-
-        if (otpMatch) {
-          return otpMatch[0];
-        }
+        if (otpMatch) return otpMatch[0];
+      } else {
+        console.log('Waiting for new email...');
       }
-    } catch (error) {
+    } catch {
       console.log('Waiting for email...');
     }
 
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, intervalMs));
   }
 
   throw new Error('OTP email not received');

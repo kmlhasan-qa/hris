@@ -1,19 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type APIRequestContext } from '@playwright/test';
 import { extractOTPFromMailTm, getLatestMailTmMessageId } from '../../helpers/mailtm.helper';
+import { MAILTM } from '../../helpers/config';
+import { BASE_URL } from './_shared';
 
-const BASE_URL = 'https://hris.itmanage.com.au';
-const REGISTERED_EMAIL = 'hris001@web-library.net';
+const REGISTERED_EMAIL = MAILTM.email;
 const NEW_PASSWORD = 'NewPassword123!@#';
 
-test('TC-001 Forgot Password - get OTP via email', async ({ request }) => {
-  const email = REGISTERED_EMAIL;
+/** Trigger a password reset and return the 6-digit OTP delivered by email. */
+async function requestResetOtp(request: APIRequestContext, email: string): Promise<string> {
   const previousMessageId = await getLatestMailTmMessageId();
 
-  const response = await request.post(`${BASE_URL}/api/auth/forgot-password`, {
-    data: { email }
-  });
-
-  // expect 200 success
+  const response = await request.post(`${BASE_URL}/api/auth/forgot-password`, { data: { email } });
   expect(response.status()).toBe(200);
 
   const body = await response.json();
@@ -22,39 +19,22 @@ test('TC-001 Forgot Password - get OTP via email', async ({ request }) => {
   if (typeof body.success !== 'undefined') expect(body.success).toBe(true);
   if (typeof body.status_code !== 'undefined') expect(body.status_code).toBe(200);
 
-  // Extract OTP from email
   const otp = await extractOTPFromMailTm(previousMessageId);
   console.log('OTP received:', otp);
   expect(otp).toMatch(/^\d{6}$/);
+  return otp;
+}
+
+test('TC-001 Forgot Password - get OTP via email', async ({ request }) => {
+  await requestResetOtp(request, REGISTERED_EMAIL);
 });
 
 test('TC-002 Verify Reset Code - valid OTP', async ({ request }) => {
-  const email = REGISTERED_EMAIL;
-  const newPassword = NEW_PASSWORD;
-  const previousMessageId = await getLatestMailTmMessageId();
+  const otp = await requestResetOtp(request, REGISTERED_EMAIL);
 
-  // First, request password reset to get OTP
-  const forgotPasswordResponse = await request.post(`${BASE_URL}/api/auth/forgot-password`, {
-    data: { email }
-  });
-
-  expect(forgotPasswordResponse.status()).toBe(200);
-
-  // Extract OTP from email
-  const otp = await extractOTPFromMailTm(previousMessageId);
-  console.log('OTP received:', otp);
-  expect(otp).toMatch(/^\d{6}$/);
-
-  // Verify reset code and reset password
   const verifyResponse = await request.post(`${BASE_URL}/api/auth/verify-reset-code`, {
-    data: {
-      email,
-      code: otp,
-      password: newPassword
-    }
+    data: { email: REGISTERED_EMAIL, code: otp, password: NEW_PASSWORD },
   });
-
-  // expect 200 success
   expect(verifyResponse.status()).toBe(200);
 
   const verifyBody = await verifyResponse.json();
@@ -62,5 +42,4 @@ test('TC-002 Verify Reset Code - valid OTP', async ({ request }) => {
   expect(verifyBody).toBeTruthy();
   if (typeof verifyBody.success !== 'undefined') expect(verifyBody.success).toBe(true);
   if (typeof verifyBody.status_code !== 'undefined') expect(verifyBody.status_code).toBe(200);
-
 });

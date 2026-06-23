@@ -1,58 +1,38 @@
 import { test, expect } from '@playwright/test';
 import { generateTOTP } from '../../helpers/totp.helper';
 import { setAuthToken } from '../../helpers/token.store';
+import { PRIMARY_ACCOUNT } from '../../helpers/config';
+import { BASE_URL, authHeaders, parseBody } from './_shared';
 
-const BASE_URL = 'https://hris.itmanage.com.au';
-
-const loginAccounts = [
-  {
-    name: 'Automation Manager',
-    email: 'manager@mailsac.com',
-    password: 'Password01!',
-    totpSecret: '53YLFR3WAR2HKSG5'
-  }
-];
-
+const loginAccounts = [PRIMARY_ACCOUNT];
 
 for (const account of loginAccounts) {
   test(`TC-001 Successful Login + 2FA verify - ${account.name}`, async ({ request }) => {
-    const response = await request.post(`${BASE_URL}/api/auth/login`, {
-      data: {
-        email: account.email,
-        password: account.password
-      }
+    const loginResponse = await request.post(`${BASE_URL}/api/auth/login`, {
+      data: { email: account.email, password: account.password },
     });
+    expect(loginResponse.status()).toBe(200);
 
-    expect(response.status()).toBe(200);
-
-    const body = await response.json();
-    const tempToken = body.temp_token || body.data?.temp_token;
-    console.log(`login body for ${account.name}:`, body);
-
+    const loginBody = await loginResponse.json();
+    const tempToken = loginBody.temp_token || loginBody.data?.temp_token;
+    console.log(`login body for ${account.name}:`, loginBody);
     expect(tempToken).toBeTruthy();
 
-    // generate 2FA code using the provided secret
+    // Generate the 2FA code from the shared secret and verify it.
     const code = generateTOTP(account.totpSecret, 6);
     console.log(`generated 2FA code for ${account.name}:`, code);
 
     const verifyResponse = await request.post(`${BASE_URL}/api/auth/2fa/verify`, {
-      headers: {
-        Authorization: `Bearer ${tempToken}`,
-        'Content-Type': 'application/json'
-      },
-      data: {
-        code
-      }
+      headers: authHeaders(tempToken, true),
+      data: { code },
     });
-
-    // expect a successful 2xx response
     expect(verifyResponse.status()).toBeGreaterThanOrEqual(200);
     expect(verifyResponse.status()).toBeLessThan(300);
 
-    const verifyBody = await verifyResponse.json().catch(() => ({}));
+    const verifyBody = await parseBody(verifyResponse);
     console.log(`verify response body for ${account.name}:`, verifyBody);
 
-    // persist token for use in other tests/files
+    // Persist the final token for use by the other specs.
     const finalToken = verifyBody?.data?.token;
     if (finalToken) {
       setAuthToken(finalToken);

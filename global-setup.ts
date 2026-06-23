@@ -1,11 +1,6 @@
 import { loginAndSaveAuthToken } from './helpers/auth.helper';
-
-const loginAccount = {
-  email: 'manager@mailsac.com',
-  password: 'Password01!',
-  totpSecret: '53YLFR3WAR2HKSG5',
-};
+import { PRIMARY_ACCOUNT } from './helpers/config';
 
 export default async function globalSetup() {
-  await loginAndSaveAuthToken(loginAccount);
+  await loginAndSaveAuthToken(PRIMARY_ACCOUNT);
 }
