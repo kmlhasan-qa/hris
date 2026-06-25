@@ -3,7 +3,7 @@ import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from '.
 
 const ENDPOINT = '/api/leave-requests';
 
-test('TC-001 Get leave requests with valid token returns 200', async ({ request }) => {
+test('TC-001 Get leave requests historywith valid token returns 200', async ({ request }) => {
   const token = requireToken();
 
   const response = await request.get(`${BASE_URL}${ENDPOINT}`, {
@@ -29,7 +29,7 @@ test('TC-001 Get leave requests with valid token returns 200', async ({ request 
   expect(body).toBeTruthy();
 });
 
-test('TC-002 Get leave requests with invalid token returns 401', async ({ request }) => {
+test('TC-002 Get leave requests history with invalid token returns 401', async ({ request }) => {
   const response = await request.get(`${BASE_URL}${ENDPOINT}`, {
     headers: {
       ...authHeaders(INVALID_TOKEN, false),
