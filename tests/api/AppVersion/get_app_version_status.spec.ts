@@ -1,7 +1,11 @@
 import { test } from '@playwright/test';
-import { BASE_URL, assertSuccessOrError } from '../_shared';
+import { assertSuccessOrError } from '../_shared';
 
-test('TC-001 Get app version status returns 200 success or error response', async ({ request }) => {
-  const response = await request.get(`${BASE_URL}/api/app-version-status`);
-  await assertSuccessOrError(response);
+test.describe('App Version Status API', () => {
+  const ENDPOINT = '/api/app-version-status';
+
+  test('TC-001 Get app version status returns success response', async ({ request }) => {
+    const response = await request.get(ENDPOINT);
+    await assertSuccessOrError(response);
+  });
 });

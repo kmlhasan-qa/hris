@@ -9,7 +9,7 @@ export default defineConfig({
   retries: 1,
 
   use: {
-    baseURL: 'https://example.com',
+    baseURL: 'https://hris.itmanage.com.au',
     headless: false,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
