@@ -1,0 +1,57 @@
+import { test, expect } from '@playwright/test';
+import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
+
+const ENDPOINT = '/api/entities/departments';
+
+test('TC-001 Get departments with valid token returns 200', async ({ request }) => {
+  const token = requireToken();
+  
+  console.log('Token used:', token);
+
+  const response = await request.get(`${BASE_URL}${ENDPOINT}`, {
+    headers: {
+      ...authHeaders(token, false),
+      Accept: 'application/json',
+    },
+  });
+
+  const body = await parseBody(response);
+
+  console.log(
+    'get departments response:',
+    JSON.stringify(body, null, 2)
+  );
+
+  expect(response.status(), 'expected 200 OK').toBe(200);
+  expect(body).toBeTruthy();
+
+  if (Array.isArray(body)) {
+    expect(body.length).toBeGreaterThan(0);
+  }
+
+  if (body?.data && Array.isArray(body.data)) {
+    expect(body.data.length).toBeGreaterThan(0);
+  }
+});
+
+test('TC-002 Get departments with invalid token returns 401', async ({ request }) => {
+  const response = await request.get(`${BASE_URL}${ENDPOINT}`, {
+    headers: {
+      ...authHeaders(INVALID_TOKEN, false),
+      Accept: 'application/json',
+    },
+  });
+
+  const body = await parseBody(response);
+
+  console.log(
+    'get departments invalid token response:',
+    JSON.stringify(body, null, 2)
+  );
+
+  expect(response.status(), 'expected 401 Unauthorized').toBe(401);
+
+  if (body?.message) {
+    expect(body.message).toContain('Unauthenticated');
+  }
+});

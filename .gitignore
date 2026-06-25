@@ -7,3 +7,5 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 playwright-report.json
+.DS_Store
+tests/.DS_Store
