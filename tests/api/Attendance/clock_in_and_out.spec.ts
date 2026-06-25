@@ -1,153 +1,122 @@
 import { test, expect, type APIRequestContext, type APIResponse } from '@playwright/test';
-import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
+import { INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
 
-const VALID_PAYLOAD = {
-  site_id: 34,
-  latitude: 33.779159,
-  longitude: -84.42072,
-  roster_id: 33,
-};
+test.describe('Attendance API', () => {
+  const CLOCK_IN_ENDPOINT = '/api/attendances/clock-in';
+  const CLOCK_OUT_ENDPOINT = '/api/attendances/clock-out';
+  const OPEN_ATTENDANCE_ENDPOINT = '/api/attendances/open';
 
-const clockIn = (request: APIRequestContext, token: string, data: Record<string, unknown>) =>
-  request.post(`${BASE_URL}/api/attendances/clock-in`, { headers: authHeaders(token, true), data });
+  const VALID_PAYLOAD = {
+    site_id: 34,
+    latitude: 33.779159,
+    longitude: -84.42072,
+    roster_id: 33,
+  };
 
-const clockOut = (request: APIRequestContext, token: string, data: Record<string, unknown>) =>
-  request.post(`${BASE_URL}/api/attendances/clock-out`, { headers: authHeaders(token, true), data });
+  type AttendancePayload = Record<string, unknown>;
 
-/** Fetch the currently open attendance record, or null if none exists. */
-async function fetchOpenAttendance(request: APIRequestContext, token: string): Promise<any | null> {
-  const response = await request.get(`${BASE_URL}/api/attendances/open`, { headers: authHeaders(token) });
-  const body = await parseBody(response);
-  console.log('open attendance status:', response.status(), 'body:', JSON.stringify(body, null, 2));
-  return response.status() === 200 ? body?.data?.data_open_attendance ?? null : null;
-}
+  const clockIn = (
+    request: APIRequestContext,
+    token: string,
+    data: AttendancePayload
+  ) =>
+    request.post(CLOCK_IN_ENDPOINT, {
+      headers: authHeaders(token, true),
+      data,
+    });
 
-/** Close an open attendance, deriving the clock-out payload from the open record. */
-async function closeOpenAttendance(request: APIRequestContext, token: string, open: any): Promise<APIResponse> {
-  const response = await clockOut(request, token, {
-    attendance_id: open?.id,
-    site_id: open?.site?.id ?? VALID_PAYLOAD.site_id,
-    latitude: open?.check_in_latitude ?? VALID_PAYLOAD.latitude,
-    longitude: open?.check_in_longitude ?? VALID_PAYLOAD.longitude,
-  });
-  console.log('close open attendance status:', response.status(), 'body:', JSON.stringify(await parseBody(response), null, 2));
-  return response;
-}
+  const clockOut = (
+    request: APIRequestContext,
+    token: string,
+    data: AttendancePayload
+  ) =>
+    request.post(CLOCK_OUT_ENDPOINT, {
+      headers: authHeaders(token, true),
+      data,
+    });
 
-async function assertClockInResponse(response: APIResponse): Promise<any> {
-  const body = await parseBody(response);
-
-  // strict: clock-in success must be 201
-  if (response.status() === 201) {
-    expect(body).toBeTruthy();
-    if (typeof body.success !== 'undefined') expect(body.success).toBe(true);
-    if (typeof body.status !== 'undefined') expect(String(body.status).toLowerCase()).toMatch(/success|ok/);
-    expect(body.data || body).toBeTruthy();
-  } else {
-    console.log(`clock-in unexpected response [${response.status()}]:`, JSON.stringify(body, null, 2));
-    expect(body.error || body.message || body.errors || body.reason).toBeTruthy();
+  async function logResponse(label: string, response: APIResponse) {
+    const body = await parseBody(response);
+    console.log(`${label} [${response.status()}]:`, JSON.stringify(body, null, 2));
+    return body;
   }
 
-  return body;
-}
+  async function fetchOpenAttendance(request: APIRequestContext, token: string) {
+    const response = await request.get(OPEN_ATTENDANCE_ENDPOINT, {
+      headers: authHeaders(token),
+    });
 
-async function assertClockOutResponse(response: APIResponse): Promise<any> {
-  const body = await parseBody(response);
-
-  if (response.status() >= 200 && response.status() < 300) {
-    expect(body).toBeTruthy();
-    if (typeof body.success !== 'undefined') expect(body.success).toBe(true);
-    expect(body.data || body).toBeTruthy();
-  } else {
-    console.log(`clock-out error response [${response.status()}]:`, JSON.stringify(body, null, 2));
-    expect(body.error || body.message || body.errors || body.reason).toBeTruthy();
+    const body = await logResponse('open attendance', response);
+    return response.status() === 200 ? body?.data?.data_open_attendance ?? null : null;
   }
 
-  return body;
-}
-
-test('TC-001 Clock in then clock out when clock-in succeeds', async ({ request }) => {
-  const token = requireToken();
-
-  // Pre-check: close any pre-existing open attendance so clock-in can succeed.
-  const existingOpen = await fetchOpenAttendance(request, token).catch((e: any) => {
-    console.log('pre-check open attendance failed:', e?.message ?? String(e));
-    return null;
-  });
-  if (existingOpen) {
-    console.log('Found open attendance; attempting to close it before clock-in');
-    await closeOpenAttendance(request, token, existingOpen);
+  async function closeOpenAttendance(
+    request: APIRequestContext,
+    token: string,
+    open: any
+  ) {
+    return clockOut(request, token, {
+      attendance_id: open?.id,
+      site_id: open?.site?.id ?? VALID_PAYLOAD.site_id,
+      latitude: open?.check_in_latitude ?? VALID_PAYLOAD.latitude,
+      longitude: open?.check_in_longitude ?? VALID_PAYLOAD.longitude,
+    });
   }
 
-  // Clock-in attempt.
-  let clockInResp = await clockIn(request, token, VALID_PAYLOAD);
-  let clockInBody = await parseBody(clockInResp);
-  console.log('clock-in attempt status:', clockInResp.status(), 'body:', JSON.stringify(clockInBody, null, 2));
+  test('TC-001 Clock in then clock out', async ({ request }) => {
+    const token = requireToken();
 
-  // If clock-in was rejected due to an open attendance, close it then retry once.
-  if (clockInResp.status() === 422) {
-    const errText = String(clockInBody?.message || JSON.stringify(clockInBody?.errors || '')).toLowerCase();
-    if (errText.includes('open attendance') || errText.includes('previous clock-out')) {
-      console.log('Detected open-attendance validation error; closing open attendance then retrying clock-in');
+    const existingOpen = await fetchOpenAttendance(request, token).catch(() => null);
 
-      const open = await fetchOpenAttendance(request, token);
-      if (open?.id) {
-        await closeOpenAttendance(request, token, open);
-        clockInResp = await clockIn(request, token, VALID_PAYLOAD);
-        clockInBody = await parseBody(clockInResp);
-        console.log('clock-in retry status:', clockInResp.status(), 'body:', JSON.stringify(clockInBody, null, 2));
-      } else {
-        console.log('No attendance_id found to auto-close; skipping retry');
-      }
+    if (existingOpen) {
+      const closeResp = await closeOpenAttendance(request, token, existingOpen);
+      await logResponse('close pre-existing open attendance', closeResp);
+      expect(closeResp.status(), 'failed to close pre-existing open attendance').toBe(200);
     }
-  }
 
-  // strict: expect 201 for clock-in
-  expect(clockInResp.status()).toBe(201);
-  await assertClockInResponse(clockInResp);
+    const clockInResp = await clockIn(request, token, VALID_PAYLOAD);
+    const clockInBody = await logResponse('clock-in', clockInResp);
 
-  // Clock out the attendance we just opened.
-  const clockOutResp = await clockOut(request, token, {
-    attendance_id: clockInBody?.data?.id,
-    site_id: VALID_PAYLOAD.site_id,
-    latitude: VALID_PAYLOAD.latitude,
-    longitude: VALID_PAYLOAD.longitude,
+    expect(clockInResp.status()).toBe(201);
+
+    const clockOutResp = await clockOut(request, token, {
+      attendance_id: clockInBody?.data?.id,
+      site_id: VALID_PAYLOAD.site_id,
+      latitude: VALID_PAYLOAD.latitude,
+      longitude: VALID_PAYLOAD.longitude,
+    });
+
+    await logResponse('clock-out', clockOutResp);
+    expect(clockOutResp.status()).toBe(200);
   });
-  console.log('clock-out status:', clockOutResp.status());
 
-  // strict: expect 200 for clock-out
-  expect(clockOutResp.status()).toBe(200);
-  await assertClockOutResponse(clockOutResp);
-});
+  test('TC-002 Clock in with invalid token returns 401', async ({ request }) => {
+    const response = await clockIn(request, INVALID_TOKEN, VALID_PAYLOAD);
 
-test('TC-002 Clock in with invalid token returns 401 unauthorized', async ({ request }) => {
-  const response = await clockIn(request, INVALID_TOKEN, VALID_PAYLOAD);
+    await logResponse('clock-in invalid token', response);
+    expect(response.status()).toBe(401);
+  });
 
-  console.log('clock-in invalid token response:', JSON.stringify(await parseBody(response), null, 2));
-  expect(response.status()).toBe(401);
-  await assertClockInResponse(response);
-});
+  test('TC-003 Clock in with missing required fields returns 422', async ({ request }) => {
+    const token = requireToken();
+    const response = await clockIn(request, token, { site_id: 0 });
 
-test('TC-003 Clock in with missing required fields returns 422 validation error', async ({ request }) => {
-  const token = requireToken();
-  const response = await clockIn(request, token, { site_id: 0 });
+    await logResponse('clock-in validation', response);
+    expect(response.status()).toBe(422);
+  });
 
-  console.log('clock-in validation error response:', JSON.stringify(await parseBody(response), null, 2));
-  expect(response.status()).toBe(422);
-  await assertClockInResponse(response);
-});
+  test('TC-004 Clock out with invalid token returns 401', async ({ request }) => {
+    const response = await clockOut(request, INVALID_TOKEN, VALID_PAYLOAD);
 
-test('TC-004 Clock out with invalid token returns 401 unauthorized', async ({ request }) => {
-  const response = await clockOut(request, INVALID_TOKEN, VALID_PAYLOAD);
+    await logResponse('clock-out invalid token', response);
+    expect(response.status()).toBe(401);
+  });
 
-  expect(response.status()).toBe(401);
-  await assertClockOutResponse(response);
-});
+  test('TC-005 Clock out with missing required fields returns 422', async ({ request }) => {
+    const token = requireToken();
+    const response = await clockOut(request, token, { site_id: 0 });
 
-test('TC-005 Clock out with missing required fields returns 422 validation error', async ({ request }) => {
-  const token = requireToken();
-  const response = await clockOut(request, token, { site_id: 0 });
-
-  expect(response.status()).toBe(422);
-  await assertClockOutResponse(response);
+    await logResponse('clock-out validation', response);
+    expect(response.status()).toBe(422);
+  });
 });

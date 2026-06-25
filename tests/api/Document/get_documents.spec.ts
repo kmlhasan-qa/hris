@@ -47,8 +47,8 @@ test('TC-003 Get documents with invalid params returns 422 validation error', as
   const response = await request.get(`${BASE_URL}${ENDPOINT}`, {
     headers: authHeaders(token, true),
     params: {
-      page: '',       // invalid
-      per_page: '',   // invalid
+      page: '',
+      per_page: '',
     },
   });
 
