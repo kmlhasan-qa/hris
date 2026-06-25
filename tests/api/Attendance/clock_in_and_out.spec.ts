@@ -69,7 +69,9 @@ test.describe('Attendance API', () => {
     const existingOpen = await fetchOpenAttendance(request, token).catch(() => null);
 
     if (existingOpen) {
-      await closeOpenAttendance(request, token, existingOpen);
+      const closeResp = await closeOpenAttendance(request, token, existingOpen);
+      await logResponse('close pre-existing open attendance', closeResp);
+      expect(closeResp.status(), 'failed to close pre-existing open attendance').toBe(200);
     }
 
     const clockInResp = await clockIn(request, token, VALID_PAYLOAD);
