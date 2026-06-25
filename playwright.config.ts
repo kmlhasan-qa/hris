@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { HRIS_BASE_URL } from './helpers/config';
 
 export default defineConfig({
   testDir: './tests',
@@ -9,16 +10,16 @@ export default defineConfig({
   retries: 1,
 
   use: {
-    baseURL: 'https://hris.itmanage.com.au',
+    baseURL: HRIS_BASE_URL,
     headless: false,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    trace: 'on-first-retry'
+    trace: 'on-first-retry',
   },
 
   reporter: [
     ['html', { open: 'never' }],
-    ['json', { outputFile: 'playwright-report.json' }]
+    ['json', { outputFile: 'playwright-report.json' }],
   ],
 
   projects: [
