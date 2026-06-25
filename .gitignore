@@ -9,3 +9,4 @@ node_modules/
 playwright-report.json
 .DS_Store
 tests/.DS_Store
+tests/api/get_token.spec.ts
