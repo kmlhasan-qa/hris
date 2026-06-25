@@ -1,10 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { MAILTM } from '../../../helpers/config';
-import {
-  requestResetOtp,
-  verifyResetCode,
-  assertSuccessResponse,
-} from '../../../helpers/password-reset.helper';
+import { requestResetOtp, verifyResetCode, assertSuccessResponse } from '../../../helpers/password-reset.helper';
 
 test.describe('Forgot Password API', () => {
   const REGISTERED_EMAIL = MAILTM.email;

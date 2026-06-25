@@ -1,10 +1,5 @@
 import { test, expect } from '@playwright/test';
-import {
-  INVALID_TOKEN,
-  authHeaders,
-  requireToken,
-  assertSuccessOrError,
-} from '../_shared';
+import { INVALID_TOKEN, authHeaders, requireToken, assertSuccessOrError } from '../_shared';
 
 test.describe('Employee Profile API', () => {
   const ENDPOINT = '/api/auth/profile';
