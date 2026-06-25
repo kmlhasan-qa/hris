@@ -25,7 +25,7 @@ test.describe('Team Attendance Detail API', () => {
   };
 
   const getTeamAttendanceDetail = (
-    request: any,
+    request: import('@playwright/test').APIRequestContext,
     departmentId: string | number,
     token: string,
     params?: Record<string, string>
