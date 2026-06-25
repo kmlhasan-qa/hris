@@ -4,7 +4,7 @@
       "/usr/local/bin/node",
       "/Users/kamalhasan/playwright-talentra/node_modules/.bin/playwright",
       "test",
-      "tests/api/Auth/get_employee_profile.spec.ts"
+      "tests/api/Document/get_documents.spec.ts"
     ],
     "configFile": "/Users/kamalhasan/playwright-talentra/playwright.config.ts",
     "rootDir": "/Users/kamalhasan/playwright-talentra/tests",
@@ -68,13 +68,13 @@
   },
   "suites": [
     {
-      "title": "api/Auth/get_employee_profile.spec.ts",
-      "file": "api/Auth/get_employee_profile.spec.ts",
+      "title": "api/Document/get_documents.spec.ts",
+      "file": "api/Document/get_documents.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "TC-001 Get employee profile with valid final token returns 200",
+          "title": "TC-001 Get documents with valid token returns 200",
           "ok": true,
           "tags": [],
           "tests": [
@@ -89,16 +89,16 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 432,
+                  "duration": 826,
                   "errors": [],
                   "stdout": [
                     {
-                      "text": "employee profile response body: {\n  success: \u001b[33mtrue\u001b[39m,\n  status_code: \u001b[33m200\u001b[39m,\n  message: \u001b[32m'Profile retrieved successfully'\u001b[39m,\n  data: {\n    id: \u001b[33m157\u001b[39m,\n    name: \u001b[32m'Automation Manager'\u001b[39m,\n    email: \u001b[32m'manager@mailsac.com'\u001b[39m,\n    employee_id: \u001b[32m'MANAGER'\u001b[39m,\n    status: \u001b[32m'approved'\u001b[39m,\n    department_id: \u001b[33m41\u001b[39m,\n    headed_departments: { \u001b[32m'01KNRT91HVAYXH3R235QB723YN'\u001b[39m: \u001b[32m'Automation Android'\u001b[39m },\n    manager_id: \u001b[1mnull\u001b[22m,\n    role_id: \u001b[33m1\u001b[39m,\n    profile: {\n      title: \u001b[32m'Dr.'\u001b[39m,\n      first_name: \u001b[32m'Automation'\u001b[39m,\n      last_name: \u001b[32m'Manager'\u001b[39m,\n      preferred_first_name: \u001b[32m'Test'\u001b[39m,\n      personal_email: \u001b[32m'manager@mailsac.com'\u001b[39m,\n      company_email: \u001b[32m'manager@mailsac.com'\u001b[39m,\n      job_title: \u001b[32m'Accountant'\u001b[39m,\n      date_of_birth: \u001b[32m'2026-04-01'\u001b[39m,\n      gender: \u001b[32m'Male'\u001b[39m,\n      personal_phone: \u001b[32m'1234567'\u001b[39m,\n      personal_phone_country_code: \u001b[32m'AU'\u001b[39m,\n      country_flag: \u001b[36m[Object]\u001b[39m,\n      personal_phone_dial_code: \u001b[32m'+61'\u001b[39m,\n      residential_address: \u001b[32m'Test address'\u001b[39m,\n      is_aboriginal_or_torres_strait_islander: \u001b[33mfalse\u001b[39m,\n      avatar_url: \u001b[1mnull\u001b[22m,\n      emergency_contact: \u001b[36m[Object]\u001b[39m,\n      financial_information: \u001b[36m[Object]\u001b[39m,\n      driving_license: \u001b[36m[Object]\u001b[39m,\n      wwcc_number: \u001b[32m'123123'\u001b[39m,\n      wwcc_number_verified: \u001b[33mtrue\u001b[39m,\n      wwcc_expiry_date: \u001b[32m'2026-06-30'\u001b[39m,\n      show_fields: \u001b[36m[Array]\u001b[39m,\n      hide_fields: []\n    },\n    documents: []\n  }\n}\n"
+                      "text": "documents response body: {\n  \"success\": true,\n  \"status_code\": 200,\n  \"message\": \"Documents retrieved successfully\",\n  \"data\": {\n    \"documents\": [\n      {\n        \"id\": 6,\n        \"public_id\": \"0                         \",\n        \"name\": \"docs test public\",\n        \"file_size\": 0,\n        \"file_url\": \"https://icthris-stg.s3.ap-southeast-2.amazonaws.com/documents/still-aware-technical-requirements.pdf?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAYRH5NIGXOBVEISFK%2F20260625%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20260625T014546Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604800&X-Amz-Signature=abc66f4b236e1eb95e99af3904fbef3192e3ac43767ec4bc6fd8541286c389dd\",\n        \"uploaded_at\": \"2026-02-06 21:24:17\"\n      },\n      {\n        \"id\": 10,\n        \"public_id\": \"01KJS8S7BNTH34GJC31EAFWY0Q\",\n        \"name\": \"SOP Document\",\n        \"file_size\": 0,\n        \"file_url\": \"https://icthris-stg.s3.ap-southeast-2.amazonaws.com/documents/01KJS8S76FMH87G98PY1N1QWA7.pdf?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAYRH5NIGXOBVEISFK%2F20260625%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20260625T014546Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604800&X-Amz-Signature=165f0cbf884b78e156854f4590f3711318c4d3188f2ac2b31e0b071b0c16f8e0\",\n        \"uploaded_at\": \"2026-03-03 07:14:45\"\n      },\n      {\n        \"id\": 15,\n        \"public_id\": \"01KKJ4TPQZNP3C8XATWE4MQFBT\",\n        \"name\": \"Public Doc\",\n        \"file_size\": 0,\n        \"file_url\": \"https://icthris-stg.s3.ap-southeast-2.amazonaws.com/documents/01KKJ4TPJNXTE04XXAFACAPX79.pdf?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAYRH5NIGXOBVEISFK%2F20260625%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20260625T014546Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604800&X-Amz-Signature=edc098427c9dc8bd4f7a4ce3fd102b52da8385b02602c8d78838660d84857b86\",\n        \"uploaded_at\": \"2026-03-12 23:06:40\"\n      },\n      {\n        \"id\": 69,\n        \"public_id\": \"01KT8JVWT75B9PYMPGNS7GJF2R\",\n        \"name\": \"Remote Work\",\n        \"file_size\": 0,\n        \"file_url\": \"https://icthris-stg.s3.ap-southeast-2.amazonaws.com/documents/remote-work.pdf?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAYRH5NIGXOBVEISFK%2F20260625%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20260625T014546Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604800&X-Amz-Signature=6cd1a9fd911e2ef45960f055791bf8206b5d6edee0c5848211247f906f2391c8\",\n        \"uploaded_at\": \"2026-06-04 05:49:28\"\n      },\n      {\n        \"id\": 73,\n        \"public_id\": \"01KT8PFYN70399PDA8VQRQWYCZ\",\n        \"name\": \" AAA  Docs \",\n        \"file_size\": 0,\n        \"file_url\": \"https://icthris-stg.s3.ap-southeast-2.amazonaws.com/documents/AAA%20Docs-2.pdf?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAYRH5NIGXOBVEISFK%2F20260625%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20260625T014546Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604800&X-Amz-Signature=7a3dd35b7e3f8e29b154213c53428549236ca35834f79680ca276cd97176f6dd\",\n        \"uploaded_at\": \"2026-06-04 06:52:51\"\n      },\n      {\n        \"id\": 74,\n        \"public_id\": \"01KVS6DSHVMBTAXVNG5D8P9K23\",\n        \"name\": \"tes\",\n        \"file_size\": 0,\n        \"file_url\": \"https://icthris-stg.s3.ap-southeast-2.amazonaws.com/documents/tes.pdf?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAYRH5NIGXOBVEISFK%2F20260625%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20260625T014546Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604800&X-Amz-Signature=771dcc1175785aeb3b7d801cd203f475fa5aad00db75858a6e0f3fc21be25ce0\",\n        \"uploaded_at\": \"2026-06-23 02:54:50\"\n      },\n      {\n        \"id\": 42,\n        \"public_id\": \"01KQV8Z1VXTVPP14TC0XQ4TV6K\",\n        \"name\": \"New document\",\n        \"file_size\": 0,\n        \"file_url\": \"https://icthris-stg.s3.ap-southeast-2.amazonaws.com/documents/01KQV8Z1NK4ZKYXTPY3BWF8TPK.pdf?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAYRH5NIGXOBVEISFK%2F20260625%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20260625T014546Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604800&X-Amz-Signature=3d5be3f3a0014e7d62303e000037e33869fef4197a22be9a2c9eb898f673c336\",\n        \"uploaded_at\": \"2026-05-05 05:14:54\"\n      },\n      {\n        \"id\": 36,\n        \"public_id\": \"01KNNERYBX8A8PK8YFZG3CB0TX\",\n        \"name\": \"Corrupted File\",\n        \"file_size\": 0,\n        \"file_url\": \"https://icthris-stg.s3.ap-southeast-2.amazonaws.com/documents/01KNNERY85NDSKEX95E9TCH6FA.pdf?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAYRH5NIGXOBVEISFK%2F20260625%2Fap-southeast-2%2Fs3%2Faws4_request&X-Amz-Date=20260625T014546Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604800&X-Amz-Signature=8c29e3cc78b786497b48af3b58484ecae87612294ecdf17980535fcf59265f58\",\n        \"uploaded_at\": \"2026-04-08 02:29:35\"\n      }\n    ],\n    \"pagination\": {\n      \"current_page\": 1,\n      \"last_page\": 1,\n      \"per_page\": 20,\n      \"total\": 8\n    }\n  }\n}\n"
                     }
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-06-23T09:19:12.650Z",
+                  "startTime": "2026-06-25T01:45:45.550Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -106,13 +106,13 @@
               "status": "expected"
             }
           ],
-          "id": "093ec670e60d719c3910-3f1e926c74c1af2880a2",
-          "file": "api/Auth/get_employee_profile.spec.ts",
-          "line": 4,
+          "id": "8306cbb373ec46567153-74f15f53cf8c67946f45",
+          "file": "api/Document/get_documents.spec.ts",
+          "line": 11,
           "column": 5
         },
         {
-          "title": "TC-002 Get employee profile with invalid token returns 401",
+          "title": "TC-002 Get documents with invalid token returns 401 unauthorized",
           "ok": true,
           "tags": [],
           "tests": [
@@ -127,12 +127,16 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 220,
+                  "duration": 303,
                   "errors": [],
-                  "stdout": [],
+                  "stdout": [
+                    {
+                      "text": "documents invalid token response: {\n  \"success\": false,\n  \"status_code\": 401,\n  \"message\": \"Unauthenticated.\"\n}\n"
+                    }
+                  ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-06-23T09:19:13.095Z",
+                  "startTime": "2026-06-25T01:45:46.392Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -140,9 +144,47 @@
               "status": "expected"
             }
           ],
-          "id": "093ec670e60d719c3910-c9713b646c4429340055",
-          "file": "api/Auth/get_employee_profile.spec.ts",
-          "line": 13,
+          "id": "8306cbb373ec46567153-a8ce0bb4b147917fc87c",
+          "file": "api/Document/get_documents.spec.ts",
+          "line": 32,
+          "column": 5
+        },
+        {
+          "title": "TC-003 Get documents with invalid params returns 422 validation error",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 345,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "documents validation error response: {\n  \"success\": false,\n  \"status_code\": 422,\n  \"message\": \"The page field must be an integer. (and 3 more errors)\",\n  \"errors\": {\n    \"page\": [\n      \"The page field must be an integer.\",\n      \"The page field must be at least 1.\"\n    ],\n    \"per_page\": [\n      \"The per page field must be an integer.\",\n      \"The per page field must be at least 1.\"\n    ]\n  }\n}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-06-25T01:45:46.704Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8306cbb373ec46567153-795351612739dbc1249d",
+          "file": "api/Document/get_documents.spec.ts",
+          "line": 44,
           "column": 5
         }
       ]
@@ -150,9 +192,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-23T09:19:09.493Z",
-    "duration": 3846.178,
-    "expected": 2,
+    "startTime": "2026-06-25T01:45:42.744Z",
+    "duration": 4330.379,
+    "expected": 3,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
