@@ -5,8 +5,6 @@ const ENDPOINT = '/api/entities/departments';
 
 test('TC-001 Get departments with valid token returns 200', async ({ request }) => {
   const token = requireToken();
-  
-  console.log('Token used:', token);
 
   const response = await request.get(`${BASE_URL}${ENDPOINT}`, {
     headers: {
