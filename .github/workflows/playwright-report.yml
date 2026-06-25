@@ -33,7 +33,9 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Run Playwright tests
-        run: npx playwright test
+        run: |
+          rm -f playwright-report.json
+          npx playwright test
         continue-on-error: true
 
       - name: Parse test results
@@ -43,17 +45,28 @@ jobs:
         run: |
           PASSED=0
           FAILED=0
+          FLAKY=0
           SKIPPED=0
+          STATUS="success"
 
           if [ -f playwright-report.json ]; then
-            PASSED=$(jq '[.. | objects | select(.status? == "passed")] | length' playwright-report.json)
-            FAILED=$(jq '[.. | objects | select(.status? == "failed")] | length' playwright-report.json)
-            SKIPPED=$(jq '[.. | objects | select(.status? == "skipped")] | length' playwright-report.json)
+            PASSED=$(jq '.stats.expected // 0' playwright-report.json)
+            FAILED=$(jq '.stats.unexpected // 0' playwright-report.json)
+            FLAKY=$(jq '.stats.flaky // 0' playwright-report.json)
+            SKIPPED=$(jq '.stats.skipped // 0' playwright-report.json)
+          fi
+
+          if [ "$FAILED" -gt 0 ]; then
+            STATUS="failed"
+          elif [ "$FLAKY" -gt 0 ]; then
+            STATUS="flaky"
           fi
 
           echo "PASSED=$PASSED" >> $GITHUB_OUTPUT
           echo "FAILED=$FAILED" >> $GITHUB_OUTPUT
+          echo "FLAKY=$FLAKY" >> $GITHUB_OUTPUT
           echo "SKIPPED=$SKIPPED" >> $GITHUB_OUTPUT
+          echo "STATUS=$STATUS" >> $GITHUB_OUTPUT
 
       - name: Upload report artifact
         id: upload
@@ -66,13 +79,14 @@ jobs:
       - name: Notify Teams
         if: always()
         env:
-          STATUS: ${{ job.status }}
+          STATUS: ${{ steps.stats.outputs.STATUS }}
           BRANCH: ${{ github.ref_name }}
           RUN_NUMBER: ${{ github.run_number }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
           PASSED: ${{ steps.stats.outputs.PASSED }}
           FAILED: ${{ steps.stats.outputs.FAILED }}
+          FLAKY: ${{ steps.stats.outputs.FLAKY }}
           SKIPPED: ${{ steps.stats.outputs.SKIPPED }}
         shell: bash
         run: |
@@ -84,6 +98,7 @@ jobs:
             --arg run "$RUN_NUMBER" \
             --arg passed "$PASSED" \
             --arg failed "$FAILED" \
+            --arg flaky "$FLAKY" \
             --arg skipped "$SKIPPED" \
             --arg url "$RUN_URL" \
             --arg artifact "$ARTIFACT_URL" \
@@ -91,7 +106,11 @@ jobs:
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
               "summary": "Playwright Test Report",
-              "themeColor": (if $status == "success" then "2ECC71" else "E74C3C" end),
+              "themeColor": (
+                if $status == "failed" then "E74C3C"
+                elif $status == "flaky" then "F39C12"
+                else "2ECC71" end
+              ),
               "title": ("Playwright Test Completed - " + $status),
               "sections": [
                 {
@@ -102,6 +121,7 @@ jobs:
                     { "name": "Run Number", "value": $run },
                     { "name": "Passed", "value": $passed },
                     { "name": "Failed", "value": $failed },
+                    { "name": "Flaky", "value": $flaky },
                     { "name": "Skipped", "value": $skipped },
                     { "name": "Report", "value": ("[Download Playwright HTML report (.zip)](" + $artifact + ")") }
                   ]
