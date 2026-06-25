@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { INVALID_TOKEN, requireToken } from '../_shared';
-import { uploadDocument, deleteDocument} from '../../../helpers/document.helper';;
+import { uploadDocument, deleteDocument } from '../../../helpers/document.helper';
  
 test('TC-001 Upload and delete document successfully', async ({ request }) => {
   const token = requireToken();
