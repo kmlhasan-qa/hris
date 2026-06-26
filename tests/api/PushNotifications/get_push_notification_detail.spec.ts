@@ -12,8 +12,24 @@ test.describe('Get Notification By Public ID API', () => {
       return;
     }
 
+    const listResponse = await request.get(
+      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}?page=1&per_page=1`,
+      {
+        headers: {
+          ...authHeaders(token),
+          Accept: 'application/json',
+        },
+      }
+    );
+
+    expect(listResponse.status()).toBe(200);
+
+    const listBody = await parseBody(listResponse);
+    const publicId = listBody?.data?.notifications?.[0]?.public_id;
+    test.skip(!publicId, 'No notifications available to fetch details for');
+
     const response = await request.get(
-      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}/${VALID_PUBLIC_ID}`,
+      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}/${publicId}`,
       {
         headers: {
           ...authHeaders(token),
