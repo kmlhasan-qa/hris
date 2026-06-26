@@ -32,7 +32,7 @@ export async function loginAndGetFinalToken(
 
     const loginBody = await loginRes.json().catch(() => ({}));
 
-    console.log('login response:', loginBody);
+    console.log('login response status:', loginRes.status());
 
     const tempToken =
       loginBody?.temp_token || loginBody?.data?.temp_token;
