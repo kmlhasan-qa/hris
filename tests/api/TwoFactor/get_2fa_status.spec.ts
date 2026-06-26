@@ -6,10 +6,6 @@ const TWO_FA_ENDPOINT = '/api/2fa';
 test.describe('2FA Status API', () => {
   test('TC-001 Get 2FA status with valid token → 200', async ({ request }) => {
     const token = requireToken();
-    if (!token) {
-      console.log('Skipping test: token unavailable');
-      return;
-    }
 
     const response = await request.get(
       `${BASE_URL}${TWO_FA_ENDPOINT}`,
