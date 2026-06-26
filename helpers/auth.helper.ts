@@ -63,7 +63,7 @@ export async function loginAndGetFinalToken(
 
     const verifyBody = await verifyRes.json().catch(() => ({}));
 
-    console.log('2FA verify response:', verifyBody);
+    console.log('2FA verify response status:', verifyRes.status());
 
     const finalToken = verifyBody?.data?.token;
 
