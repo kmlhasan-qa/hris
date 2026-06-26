@@ -22,7 +22,7 @@ test.describe('Delete Leave Request Document API - Negative Scenarios', () => {
 
   test('TC-NEG-002 Delete document with invalid token → 401', async ({ request }) => {
     const response = await request.delete(
-      `${BASE_URL}${DELETE_DOCUMENT_ENDPOINT}/1/document`,
+      `${BASE_URL}${DELETE_DOCUMENT_ENDPOINT}/${process.env.LEAVE_REQUEST_ID ?? 1}/document`,
       {
         headers: {
           Authorization: `Bearer ${INVALID_TOKEN}`,
