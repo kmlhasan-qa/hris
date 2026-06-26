@@ -6,7 +6,7 @@ const DELETE_DOCUMENT_ENDPOINT = '/api/leave-requests';
 test.describe('Delete Leave Request Document API - Negative Scenarios', () => {
   test('TC-NEG-001 Delete document without token → 401', async ({ request }) => {
     const response = await request.delete(
-      `${BASE_URL}${DELETE_DOCUMENT_ENDPOINT}/1/document`,
+      `${BASE_URL}${DELETE_DOCUMENT_ENDPOINT}/${process.env.LEAVE_REQUEST_ID ?? 1}/document`,
       {
         headers: {
           Accept: 'application/json',
