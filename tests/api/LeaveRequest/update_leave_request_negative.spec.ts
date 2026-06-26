@@ -47,7 +47,7 @@ test.describe('Update Leave History API - Negative Scenarios', () => {
   test('TC-NEG-003 Update non-pending leave request → 403', async ({ request }) => {
     const token = requireToken();
 
-    const response = await request.post(`${BASE_URL}${UPDATE_ENDPOINT}/9/update`, {
+    const response = await request.post(`${BASE_URL}${UPDATE_ENDPOINT}/${process.env.NON_PENDING_LEAVE_REQUEST_ID ?? 9}/update`, {
       headers: {
         ...authHeaders(token, false),
         Accept: 'application/json',
