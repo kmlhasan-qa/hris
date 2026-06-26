@@ -13,8 +13,7 @@ test('TC-001 Get leave requests historywith valid token returns 200', async ({ r
     },
     params: {
       page: 1,
-      per_page: 20,
-      status: 'pending',
+      per_page: 20
     },
   });
 

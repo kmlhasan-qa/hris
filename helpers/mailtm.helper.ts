@@ -39,7 +39,7 @@ export async function getLatestMailTmMessageId(): Promise<string | undefined> {
 
 export async function extractOTPFromMailTm(
   previousMessageId?: string,
-  { attempts = 12, intervalMs = 5000 }: { attempts?: number; intervalMs?: number } = {},
+  { attempts = 3, intervalMs = 5000 }: { attempts?: number; intervalMs?: number } = {},
 ): Promise<string> {
   const client = await authedClient();
   console.log('Logged into mail.tm');
