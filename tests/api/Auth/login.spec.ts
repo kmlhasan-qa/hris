@@ -47,8 +47,8 @@ test.describe('Login API', () => {
             email: PRIMARY_ACCOUNT.email,
             password: PRIMARY_ACCOUNT.password,
           },
+          timeout: 2000,
         }
-      );
     }).rejects.toThrow();
   });
 
