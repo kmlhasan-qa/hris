@@ -39,7 +39,7 @@ if (!otp) test.skip(true, 'OTP not generated from mail server');
   test('TC-002 Verify reset code with valid OTP returns 200 success', async ({ request }) => {
     const otp = await getOtpSafely(request);
 
-    if (!otp) return;
+if (!otp) test.skip(true, 'OTP not generated from mail server');
 
     const response = await verifyResetCode(request, {
       email: REGISTERED_EMAIL,
