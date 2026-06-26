@@ -28,10 +28,6 @@ test.describe('Account Deletion Request API', () => {
     request,
   }) => {
     const token = requireToken();
-    if (!token) {
-      console.log('Skipping test: token unavailable');
-      return;
-    }
 
     const { response, body } = await submitDeletionRequest(
       request,
