@@ -91,7 +91,7 @@ test.describe('Countries API', () => {
     }).rejects.toThrow();
   });
 
-  test('TC-006 Get countries with forced timeout → failed to fetch', async ({
+  test('TC-005 Get countries with forced timeout → failed to fetch', async ({
     request,
   }) => {
     const token = requireToken();
