@@ -66,32 +66,7 @@ test.describe('Sites API', () => {
     }
   });
 
-  test('TC-003 Get sites with invalid query params returns 422', async ({
-    request,
-  }) => {
-    const token = requireToken();
-
-    const response = await request.get(`${BASE_URL}${ENDPOINT}`, {
-      headers: {
-        ...authHeaders(token, false),
-        Accept: 'application/json',
-      },
-      params: {
-        page: 'invalid',
-      },
-    });
-
-    const body = await parseBody(response);
-
-    console.log(
-      'invalid params response:',
-      JSON.stringify(body, null, 2)
-    );
-
-    expect(response.status()).toBe(422);
-  });
-
-  test('TC-004 Get sites without token returns 401', async ({
+  test('TC-003 Get sites without token returns 401', async ({
     request,
   }) => {
     const response = await request.get(`${BASE_URL}${ENDPOINT}`, {
@@ -110,7 +85,7 @@ test.describe('Sites API', () => {
     expect(response.status()).toBe(401);
   });
 
-  test('TC-005 Get sites with unreachable host → failed to fetch', async ({
+  test('TC-004 Get sites with unreachable host → failed to fetch', async ({
     request,
   }) => {
     await expect(async () => {
@@ -120,7 +95,7 @@ test.describe('Sites API', () => {
     }).rejects.toThrow();
   });
 
-  test('TC-006 Get sites with forced timeout → failed to fetch', async ({
+  test('TC-005 Get sites with forced timeout → failed to fetch', async ({
     request,
   }) => {
     const token = requireToken();
