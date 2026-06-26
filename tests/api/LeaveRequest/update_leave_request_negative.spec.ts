@@ -91,7 +91,7 @@ test.describe('Update Leave History API - Negative Scenarios', () => {
   test('TC-NEG-005 Missing required fields → 422', async ({ request }) => {
     const token = requireToken();
 
-    const response = await request.post(`${BASE_URL}${UPDATE_ENDPOINT}/1/update`, {
+    const response = await request.post(`${BASE_URL}${UPDATE_ENDPOINT}/${process.env.LEAVE_REQUEST_ID ?? 1}/update`, {
       headers: {
         ...authHeaders(token, false),
         Accept: 'application/json',
