@@ -42,8 +42,7 @@ test.describe('Notifications API', () => {
       )[0];
 
     if (!unreadNotification) {
-      console.log('No unread notifications found. Skipping PATCH request.');
-      return;
+      test.skip(true, 'No unread notifications found to exercise mark-as-read flow');
     }
 
     const publicId = unreadNotification.public_id;
