@@ -94,8 +94,8 @@ test.describe('Leave Request API - Negative Scenarios', () => {
       },
       multipart: {
         leave_type_id: '4',
-        start_date: '2026-06-30',
-        end_date: '2026-06-20',
+        start_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         reason: 'Invalid date range',
       },
     });
