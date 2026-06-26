@@ -41,7 +41,7 @@ test.describe('Delete Leave Request Document API - Negative Scenarios', () => {
     const token = requireToken();
 
     const response = await request.delete(
-      `${BASE_URL}${DELETE_DOCUMENT_ENDPOINT}/9/document`,
+      `${BASE_URL}${DELETE_DOCUMENT_ENDPOINT}/${process.env.NON_PENDING_LEAVE_REQUEST_ID ?? 9}/document`,
       {
         headers: {
           ...authHeaders(token, false),
