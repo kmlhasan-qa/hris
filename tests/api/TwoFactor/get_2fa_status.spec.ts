@@ -1,19 +1,37 @@
-import { test, expect } from '@playwright/test';
-import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
+import { test, expect, type APIRequestContext } from '@playwright/test';
+import {
+  BASE_URL,
+  INVALID_TOKEN,
+  authHeaders,
+  parseBody,
+  requireToken,
+} from '../_shared';
 
 const TWO_FA_ENDPOINT = '/api/2fa';
+const REQUEST_TIMEOUT = 10;
 
 test.describe('2FA Status API', () => {
-  test('TC-001 Get 2FA status with valid token → 200', async ({ request }) => {
+  const get2FAStatus = (
+    request: APIRequestContext,
+    headers: Record<string, string>,
+    endpoint: string = `${BASE_URL}${TWO_FA_ENDPOINT}`,
+    options?: { timeout?: number }
+  ) =>
+    request.get(endpoint, {
+      headers,
+      ...options,
+    });
+
+  test('TC-001 Get 2FA status with valid token → 200', async ({
+    request,
+  }) => {
     const token = requireToken();
 
-    const response = await request.get(
-      `${BASE_URL}${TWO_FA_ENDPOINT}`,
+    const response = await get2FAStatus(
+      request,
       {
-        headers: {
-          ...authHeaders(token),
-          Accept: 'application/json',
-        },
+        ...authHeaders(token),
+        Accept: 'application/json',
       }
     );
 
@@ -26,13 +44,13 @@ test.describe('2FA Status API', () => {
     expect(body.message).toContain('2FA status retrieved successfully');
   });
 
-  test('TC-002 Get 2FA status without token → 401', async ({ request }) => {
-    const response = await request.get(
-      `${BASE_URL}${TWO_FA_ENDPOINT}`,
+  test('TC-002 Get 2FA status without token → 401', async ({
+    request,
+  }) => {
+    const response = await get2FAStatus(
+      request,
       {
-        headers: {
-          Accept: 'application/json',
-        },
+        Accept: 'application/json',
       }
     );
 
@@ -43,14 +61,14 @@ test.describe('2FA Status API', () => {
     expect(response.status()).toBe(401);
   });
 
-  test('TC-003 Get 2FA status with invalid token → 401', async ({ request }) => {
-    const response = await request.get(
-      `${BASE_URL}${TWO_FA_ENDPOINT}`,
+  test('TC-003 Get 2FA status with invalid token → 401', async ({
+    request,
+  }) => {
+    const response = await get2FAStatus(
+      request,
       {
-        headers: {
-          Authorization: `Bearer ${INVALID_TOKEN}`,
-          Accept: 'application/json',
-        },
+        Authorization: `Bearer ${INVALID_TOKEN}`,
+        Accept: 'application/json',
       }
     );
 
@@ -59,5 +77,33 @@ test.describe('2FA Status API', () => {
     console.log('401 invalid token:', JSON.stringify(body, null, 2));
 
     expect(response.status()).toBe(401);
+  });
+
+  test('TC-004 Get 2FA status with unreachable host → failed to fetch', async ({
+    request,
+  }) => {
+    await expect(async () => {
+      await request.get(
+        'https://invalid-domain-for-testing-12345.com/api/2fa'
+      );
+    }).rejects.toThrow();
+  });
+
+  test('TC-005 Get 2FA status with forced timeout → failed to fetch', async ({
+    request,
+  }) => {
+    const token = requireToken();
+
+    await expect(async () => {
+      await get2FAStatus(
+        request,
+        {
+          ...authHeaders(token),
+          Accept: 'application/json',
+        },
+        `${BASE_URL}${TWO_FA_ENDPOINT}`,
+        { timeout: REQUEST_TIMEOUT }
+      );
+    }).rejects.toThrow();
   });
 });

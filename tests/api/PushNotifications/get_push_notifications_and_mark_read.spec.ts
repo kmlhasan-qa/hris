@@ -1,27 +1,64 @@
-import { test, expect } from '@playwright/test';
-import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
+import { test, expect, type APIRequestContext } from '@playwright/test';
+import {
+  BASE_URL,
+  INVALID_TOKEN,
+  authHeaders,
+  parseBody,
+  requireToken,
+} from '../_shared';
 
 const NOTIFICATIONS_ENDPOINT = '/api/notifications';
+const REQUEST_TIMEOUT = 10;
+
+const DEFAULT_PARAMS = {
+  page: 1,
+  per_page: 20,
+};
 
 test.describe('Notifications API', () => {
-  test('TC-001 Get notifications and validate mark as read flow → 200 then 400', async ({ request }) => {
+  const getNotifications = (
+    request: APIRequestContext,
+    headers: Record<string, string>,
+    params: Record<string, any> = DEFAULT_PARAMS,
+    endpoint: string = `${BASE_URL}${NOTIFICATIONS_ENDPOINT}`,
+    options?: { timeout?: number }
+  ) =>
+    request.get(endpoint, {
+      headers,
+      params,
+      ...options,
+    });
+
+  const markAsRead = (
+    request: APIRequestContext,
+    publicId: string,
+    headers: Record<string, string>,
+    endpoint?: string,
+    options?: { timeout?: number }
+  ) =>
+    request.patch(
+      endpoint ?? `${BASE_URL}${NOTIFICATIONS_ENDPOINT}/${publicId}/read`,
+      {
+        headers,
+        ...options,
+      }
+    );
+
+  test('TC-001 Get notifications and validate mark as read flow → 200 then 400', async ({
+    request,
+  }) => {
     const token = requireToken();
-    if (!token) {
-      console.log('Skipping test: token unavailable');
-      return;
-    }
 
     // =========================
     // STEP 1: GET NOTIFICATIONS
     // =========================
-    const response = await request.get(
-      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}?page=1&per_page=20`,
+    const response = await getNotifications(
+      request,
       {
-        headers: {
-          ...authHeaders(token),
-          Accept: 'application/json',
-        },
-      }
+        ...authHeaders(token),
+        Accept: 'application/json',
+      },
+      DEFAULT_PARAMS
     );
 
     const body = await parseBody(response);
@@ -46,7 +83,6 @@ test.describe('Notifications API', () => {
     }
 
     const publicId = unreadNotification.public_id;
-
     expect(publicId).toBeTruthy();
 
     console.log('Using public_id:', publicId);
@@ -54,13 +90,12 @@ test.describe('Notifications API', () => {
     // =========================
     // STEP 2: PATCH → 200
     // =========================
-    const patchResponse = await request.patch(
-      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}/${publicId}/read`,
+    const patchResponse = await markAsRead(
+      request,
+      publicId,
       {
-        headers: {
-          ...authHeaders(token),
-          Accept: 'application/json',
-        },
+        ...authHeaders(token),
+        Accept: 'application/json',
       }
     );
 
@@ -77,13 +112,12 @@ test.describe('Notifications API', () => {
     // =========================
     // STEP 3: PATCH AGAIN → 400
     // =========================
-    const secondPatchResponse = await request.patch(
-      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}/${publicId}/read`,
+    const secondPatchResponse = await markAsRead(
+      request,
+      publicId,
       {
-        headers: {
-          ...authHeaders(token),
-          Accept: 'application/json',
-        },
+        ...authHeaders(token),
+        Accept: 'application/json',
       }
     );
 
@@ -100,26 +134,30 @@ test.describe('Notifications API', () => {
     );
   });
 
-  test('TC-002 Get notifications without token → 401', async ({ request }) => {
-    const response = await request.get(
-      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}?page=1&per_page=20`,
+  test('TC-002 Get notifications without token → 401', async ({
+    request,
+  }) => {
+    const response = await getNotifications(
+      request,
       {
-        headers: { Accept: 'application/json' },
-      }
+        Accept: 'application/json',
+      },
+      DEFAULT_PARAMS
     );
 
     expect(response.status()).toBe(401);
   });
 
-  test('TC-003 Get notifications with invalid token → 401', async ({ request }) => {
-    const response = await request.get(
-      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}?page=1&per_page=20`,
+  test('TC-003 Get notifications with invalid token → 401', async ({
+    request,
+  }) => {
+    const response = await getNotifications(
+      request,
       {
-        headers: {
-          Authorization: `Bearer ${INVALID_TOKEN}`,
-          Accept: 'application/json',
-        },
-      }
+        Authorization: `Bearer ${INVALID_TOKEN}`,
+        Accept: 'application/json',
+      },
+      DEFAULT_PARAMS
     );
 
     expect(response.status()).toBe(401);
@@ -127,15 +165,16 @@ test.describe('Notifications API', () => {
 
   test('TC-004 Invalid page parameter → 422', async ({ request }) => {
     const token = requireToken();
-    if (!token) return;
 
-    const response = await request.get(
-      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}?page=abc&per_page=20`,
+    const response = await getNotifications(
+      request,
       {
-        headers: {
-          ...authHeaders(token),
-          Accept: 'application/json',
-        },
+        ...authHeaders(token),
+        Accept: 'application/json',
+      },
+      {
+        page: 'abc',
+        per_page: 20,
       }
     );
 
@@ -144,18 +183,48 @@ test.describe('Notifications API', () => {
 
   test('TC-005 Invalid per_page parameter → 422', async ({ request }) => {
     const token = requireToken();
-    if (!token) return;
 
-    const response = await request.get(
-      `${BASE_URL}${NOTIFICATIONS_ENDPOINT}?page=1&per_page=abc`,
+    const response = await getNotifications(
+      request,
       {
-        headers: {
-          ...authHeaders(token),
-          Accept: 'application/json',
-        },
+        ...authHeaders(token),
+        Accept: 'application/json',
+      },
+      {
+        page: 1,
+        per_page: 'abc',
       }
     );
 
     expect(response.status()).toBe(422);
+  });
+
+  test('TC-006 Notifications API with unreachable host → failed to fetch', async ({
+    request,
+  }) => {
+    await expect(async () => {
+      await request.get(
+        'https://invalid-domain-for-testing-12345.com/api/notifications'
+      );
+    }).rejects.toThrow();
+  });
+
+  test('TC-007 Notifications API with forced timeout → failed to fetch', async ({
+    request,
+  }) => {
+    const token = requireToken();
+
+    await expect(async () => {
+      await getNotifications(
+        request,
+        {
+          ...authHeaders(token),
+          Accept: 'application/json',
+        },
+        DEFAULT_PARAMS,
+        `${BASE_URL}${NOTIFICATIONS_ENDPOINT}`,
+        { timeout: REQUEST_TIMEOUT }
+      );
+    }).rejects.toThrow();
   });
 });
