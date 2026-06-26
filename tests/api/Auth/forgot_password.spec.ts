@@ -30,7 +30,7 @@ test.describe('Forgot Password API', () => {
   test('TC-001 Forgot password returns OTP via email', async ({ request }) => {
     const otp = await getOtpSafely(request);
 
-    if (!otp) return;
+if (!otp) test.skip(true, 'OTP not generated from mail server');
 
     console.log('OTP generated successfully:', otp);
     expect(otp).toBeTruthy();
