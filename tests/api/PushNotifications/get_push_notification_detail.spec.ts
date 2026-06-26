@@ -2,9 +2,11 @@ import { test, expect } from '@playwright/test';
 import { BASE_URL, INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
 
 const NOTIFICATIONS_ENDPOINT = '/api/notifications';
-const VALID_PUBLIC_ID = '01KVWHEPS5ADFPNGTDRB02QQSR';
+const VALID_PUBLIC_ID = process.env.NOTIFICATION_PUBLIC_ID;
 
 test.describe('Get Notification By Public ID API', () => {
+  test.skip(!VALID_PUBLIC_ID, 'Set NOTIFICATION_PUBLIC_ID env var to an existing notification public_id');
+
   test('TC-001 Get notification with valid publicId → 200', async ({ request }) => {
     const token = requireToken();
     if (!token) {
