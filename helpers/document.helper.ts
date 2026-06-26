@@ -23,7 +23,7 @@ export async function uploadDocument(
   const multipart: any = {};
 
   if (includeFile) {
-    const pdfPath = path.resolve(__dirname, '../tests/fixtures/sample.pdf');
+    const pdfPath = path.resolve(__dirname, '../fixtures/sample.pdf');
     const fileBuffer = fs.readFileSync(pdfPath);
 
     multipart.document = {

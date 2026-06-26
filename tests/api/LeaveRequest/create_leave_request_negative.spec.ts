@@ -13,7 +13,7 @@ const CREATE_ENDPOINT = '/api/leave-requests';
 const REQUEST_TIMEOUT = 10;
 const today = new Date().toISOString().split('T')[0];
 
-const pdfPath = path.join(process.cwd(), 'tests/fixtures/sample.pdf');
+const pdfPath = path.join(process.cwd(), 'fixtures/sample.pdf');
 const fileBuffer = fs.readFileSync(pdfPath);
 
 const VALID_MULTIPART = {

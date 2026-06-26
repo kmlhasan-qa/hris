@@ -12,8 +12,8 @@ import {
 const ENDPOINT = '/api/profile/avatar';
 const REQUEST_TIMEOUT = 10;
 
-const avatarPath = path.resolve(__dirname, '../../fixtures/avatar.jpg');
-const invalidFilePath = path.resolve(__dirname, '../../fixtures/invalid.txt');
+const avatarPath = path.resolve(__dirname, '../../../fixtures/avatar.jpg');
+const invalidFilePath = path.resolve(__dirname, '../../../fixtures/invalid.txt');
 
 test.describe('Upload Avatar API', () => {
   const uploadAvatar = (

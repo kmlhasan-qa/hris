@@ -21,7 +21,7 @@ function getSafeFutureDate(daysAhead = 14) {
   return date.toISOString().split('T')[0];
 }
 
-const pdfPath = path.join(process.cwd(), 'tests/fixtures/sample.pdf');
+const pdfPath = path.join(process.cwd(), 'fixtures/sample.pdf');
 const fileBuffer = fs.readFileSync(pdfPath);
 
 test.describe('Leave Request Workflow API', () => {
