@@ -1,8 +1,14 @@
-import { test, expect } from '@playwright/test';
-import { INVALID_TOKEN, authHeaders, parseBody, requireToken } from '../_shared';
+import { test, expect, type APIRequestContext } from '@playwright/test';
+import {
+  INVALID_TOKEN,
+  authHeaders,
+  parseBody,
+  requireToken,
+} from '../_shared';
 
 test.describe('Team Attendance Detail API', () => {
   const ENDPOINT = '/api/attendances/team';
+  const REQUEST_TIMEOUT = 10;
 
   const DEPARTMENT_PUBLIC_ID = '01KNRT91HVAYXH3R235QB723YN';
   const NOT_HEAD_DEPARTMENT_ID = '01KN124C4AKWAED6V1JEP7P7K2';
@@ -24,73 +30,115 @@ test.describe('Team Attendance Detail API', () => {
     return `${ENDPOINT}/${departmentId}/detail?${search}`;
   };
 
-  const getTeamAttendanceDetail = (
-    request: import('@playwright/test').APIRequestContext,
+  async function getTeamAttendanceDetail(
+    request: APIRequestContext,
     departmentId: string | number,
-    token: string,
-    params?: Record<string, string>
-  ) =>
-    request.get(buildDetailUrl(departmentId, params), {
-      headers: authHeaders(token, true),
+    headers: Record<string, string>,
+    params?: Record<string, string>,
+    options?: { timeout?: number; endpoint?: string }
+  ) {
+    const endpoint =
+      options?.endpoint ?? buildDetailUrl(departmentId, params);
+
+    const response = await request.get(endpoint, {
+      headers,
+      timeout: options?.timeout,
     });
 
-  test('TC-001 Get team attendance detail returns 200 success', async ({ request }) => {
+    const body = await parseBody(response);
+    return { response, body };
+  }
+
+  async function logResponse(label: string, body: any, status?: number) {
+    console.log(
+      `${label}${status ? ` [${status}]` : ''}:`,
+      JSON.stringify(body, null, 2)
+    );
+  }
+
+  test('TC-001 Get team attendance detail returns 200 success', async ({
+    request,
+  }) => {
     const token = requireToken();
 
-    const response = await getTeamAttendanceDetail(
+    const { response, body } = await getTeamAttendanceDetail(
       request,
       DEPARTMENT_PUBLIC_ID,
-      token
+      authHeaders(token, true)
     );
 
-    const body = await parseBody(response);
-    console.log('team attendance detail response:', body);
+    await logResponse('team attendance detail response', body, response.status());
 
-    expect(response.status(), 'expected 200 OK').toBe(200);
+    expect(response.status()).toBe(200);
   });
 
-  test('TC-002 Get team attendance detail returns 401 unauthorized', async ({ request }) => {
-    const response = await getTeamAttendanceDetail(
+  test('TC-002 Get team attendance detail returns 401 unauthorized', async ({
+    request,
+  }) => {
+    const { response, body } = await getTeamAttendanceDetail(
       request,
       DEPARTMENT_PUBLIC_ID,
-      INVALID_TOKEN
+      authHeaders(INVALID_TOKEN, true)
     );
 
-    const body = await parseBody(response);
-    console.log('team attendance detail unauthorized response:', body);
+    await logResponse('unauthorized response', body, response.status());
 
-    expect(response.status(), 'expected 401 Unauthorized').toBe(401);
+    expect(response.status()).toBe(401);
   });
 
-  test('TC-003 Get team attendance detail with invalid department returns 400', async ({ request }) => {
+  test('TC-003 Get team attendance detail without token returns 401', async ({
+    request,
+  }) => {
+    const { response, body } = await getTeamAttendanceDetail(
+      request,
+      DEPARTMENT_PUBLIC_ID,
+      {
+        Accept: 'application/json',
+      }
+    );
+
+    await logResponse('missing token response', body, response.status());
+
+    expect(response.status()).toBe(401);
+  });
+
+  test('TC-004 Get team attendance detail with invalid department returns 400', async ({
+    request,
+  }) => {
     const token = requireToken();
 
-    const response = await getTeamAttendanceDetail(request, 1, token);
-    const body = await parseBody(response);
+    const { response, body } = await getTeamAttendanceDetail(
+      request,
+      1,
+      authHeaders(token, true)
+    );
 
-    console.log('invalid department response:', body);
+    await logResponse('invalid department response', body, response.status());
 
-    expect(response.status(), 'expected 400 Bad Request').toBe(400);
+    expect(response.status()).toBe(400);
     expect(body?.message).toMatch(INVALID_DEPARTMENT_MESSAGE);
   });
 
-  test('TC-004 Get team attendance detail with non-head department returns 400', async ({ request }) => {
+  test('TC-005 Get team attendance detail with non-head department returns 400', async ({
+    request,
+  }) => {
     const token = requireToken();
 
-    const response = await getTeamAttendanceDetail(
+    const { response, body } = await getTeamAttendanceDetail(
       request,
       NOT_HEAD_DEPARTMENT_ID,
-      token
+      authHeaders(token, true)
     );
 
-    const body = await parseBody(response);
-    console.log('not head department response:', body);
+    await logResponse('non-head department response', body, response.status());
 
-    expect(response.status(), 'expected 400 Bad Request').toBe(400);
+    expect(response.status()).toBe(400);
     expect(body?.message).toMatch(INVALID_DEPARTMENT_MESSAGE);
   });
 
-  test('TC-005 Get team attendance detail with missing date returns 422', async ({ request }) => {
+  test('TC-006 Get team attendance detail with missing date returns 422', async ({
+    request,
+  }) => {
     const token = requireToken();
 
     const invalidQuery = {
@@ -99,18 +147,43 @@ test.describe('Team Attendance Detail API', () => {
       to: '2026-05-31',
     };
 
-    const response = await getTeamAttendanceDetail(
+    const { response, body } = await getTeamAttendanceDetail(
       request,
       DEPARTMENT_PUBLIC_ID,
-      token,
+      authHeaders(token, true),
       invalidQuery
     );
 
-    const body = await parseBody(response);
-    console.log('validation error response:', body);
+    await logResponse('validation error response', body, response.status());
 
-    expect(response.status(), 'expected 422 Unprocessable Entity').toBe(422);
+    expect(response.status()).toBe(422);
     expect(body?.message).toMatch(/date field is required/i);
     expect(body?.errors?.date).toBeTruthy();
+  });
+
+  test('TC-007 Get team attendance detail with unreachable host → failed to fetch', async ({
+    request,
+  }) => {
+    await expect(async () => {
+      await request.get(
+        'https://invalid-domain-for-testing-12345.com/api/attendances/team'
+      );
+    }).rejects.toThrow();
+  });
+
+  test('TC-008 Get team attendance detail with forced timeout → failed to fetch', async ({
+    request,
+  }) => {
+    const token = requireToken();
+
+    await expect(async () => {
+      await getTeamAttendanceDetail(
+        request,
+        DEPARTMENT_PUBLIC_ID,
+        authHeaders(token, true),
+        DEFAULT_QUERY,
+        { timeout: REQUEST_TIMEOUT }
+      );
+    }).rejects.toThrow();
   });
 });
