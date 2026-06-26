@@ -12,7 +12,7 @@ const REQUEST_TIMEOUT = 10;
 
 test.describe('Account Deletion Request API', () => {
   async function submitDeletionRequest(
-    request: any,
+    request: import('@playwright/test').APIRequestContext,
     headers: Record<string, string>
   ) {
     const response = await request.post(`${BASE_URL}${ENDPOINT}`, {
