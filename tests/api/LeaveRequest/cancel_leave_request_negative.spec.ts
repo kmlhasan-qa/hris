@@ -9,12 +9,15 @@ import {
 
 const CANCEL_ENDPOINT = '/api/leave-requests';
 
-// Replace with real IDs from your environment
-const VALID_CANCELLABLE_LEAVE_ID = 236; // existing + future leave
-const NON_CANCELLABLE_LEAVE_ID = 9; // existing + non-future leave
+const VALID_CANCELLABLE_LEAVE_ID = Number(process.env.CANCELLABLE_LEAVE_REQUEST_ID);
+const NON_CANCELLABLE_LEAVE_ID = Number(process.env.NON_CANCELLABLE_LEAVE_REQUEST_ID);
 const INVALID_LEAVE_ID = 999999;
 
 test.describe('Cancel Leave Request API - Negative Scenarios', () => {
+  test.skip(
+    !VALID_CANCELLABLE_LEAVE_ID || !NON_CANCELLABLE_LEAVE_ID,
+    'Set CANCELLABLE_LEAVE_REQUEST_ID and NON_CANCELLABLE_LEAVE_REQUEST_ID to valid leave request IDs for this environment'
+  );
   test('TC-NEG-001 Cancel leave request without token → 401', async ({ request }) => {
     const response = await request.post(
       `${BASE_URL}${CANCEL_ENDPOINT}/${VALID_CANCELLABLE_LEAVE_ID}/cancel`,
