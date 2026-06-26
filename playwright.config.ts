@@ -11,7 +11,7 @@ export default defineConfig({
 
   use: {
     baseURL: HRIS_BASE_URL,
-    headless: false,
+    headless: true,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     trace: 'on-first-retry',
