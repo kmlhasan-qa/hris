@@ -57,10 +57,8 @@ test('TC-001 Create → Update → Delete Document → Cancel leave request work
     createResponse.status() === 422 &&
     createBody?.message?.includes('Leave cannot be taken on a public holiday')
   ) {
-    console.log(
-      `Workflow skipped: ${leaveDate} is a public holiday`
-    );
-    return;
+    console.log(`Workflow skipped: ${leaveDate} is a public holiday`);
+    test.skip(true, `Public holiday: ${leaveDate}`);
   }
 
   expect(createResponse.status(), 'expected 201 Created').toBe(201);
