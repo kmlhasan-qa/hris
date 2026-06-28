@@ -1,48 +1,44 @@
-/*
-
-import { test, expect, Page, BrowserContext } from '@playwright/test';
-import { LoginPage } from '../../../pages/LoginPage';
+import { test, expect, Page } from '@playwright/test';
 import { DepartmentsPage } from '../../../pages/DepartmentsPage';
-import { generateTOTP } from '../../../helpers/totp.helper';
 
-const EMAIL       = 'kamal@ictechnology.com.au';
-const PASSWORD    = 'Password01';
-const TOTP_SECRET = 'SQGN3PT4AEMC56BS';
-const BASE_URL    = 'https://hris.itmanage.com.au';
+const BASE_URL = 'https://hris.itmanage.com.au';
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+async function livewireSettle(page: Page, ms = 0) {
+  await page.waitForLoadState('networkidle');
+  if (ms > 0) await page.waitForTimeout(ms);
+}
+
+async function waitUntil(fn: () => Promise<void>, timeout = 10000) {
+  await expect(fn).toPass({ timeout });
+}
 
 test.describe('Departments', () => {
   test.describe.configure({ retries: 0 });
 
-  test('TC-DEPT | Full departments test suite', async ({ browser }) => {
+  test('TC-DEPT | Full departments test suite', async ({ page }) => {
     test.setTimeout(180_000);
 
-    const context: BrowserContext = await browser.newContext();
-    const page: Page = await context.newPage();
+    // ─── Reuse authenticated session ───────────────────────────────────────
+    await page.goto(`${BASE_URL}/admin`);
 
-    try {
-      // ─── Login ──────────────────────────────────────────────────────────────
-      const loginPage = new LoginPage(page);
-      await loginPage.goto(`${BASE_URL}/login`);
-      await loginPage.emailInput().fill(EMAIL);
-      await loginPage.passwordInput().fill(PASSWORD);
-      await loginPage.rememberMe().check();
-      await loginPage.signInButton().click();
+    if (page.url().includes('/login')) {
+      throw new Error('Session invalid: redirected to login page');
+    }
 
-      await expect(loginPage.otpInput()).toBeVisible();
-      await loginPage.otpInput().fill(generateTOTP(TOTP_SECRET));
-      await loginPage.confirmButton().click();
-      await expect(loginPage.dashboardTitle()).toBeVisible({ timeout: 15_000 });
-      console.log('✅ Logged in successfully.');
+    console.log('✅ Logged in via reused session.');
 
-      // ─── Navigate to Departments ─────────────────────────────────────────────
-      const dept = new DepartmentsPage(page);
-      await dept.goto();
-      console.log('✅ Navigated to Departments page.');
+    // ─── Navigate to Departments page ──────────────────────────────────────
+    const dept = new DepartmentsPage(page);
+    await page.goto(`${BASE_URL}/admin/departments`);
+    await livewireSettle(page);
 
-      // ─── TC-DEPT-001 | Page heading ─────────────────────────────────────────
-      console.log('⏳ TC-DEPT-001 | Checking page heading...');
-      await dept.assertOnPage();
-      console.log('✅ TC-DEPT-001 | Page heading is "Departments".');
+    console.log('✅ Navigated to Departments page.');
+
+    // ─── TC-DEPT-001 | Page heading ────────────────────────────────────────
+    console.log('⏳ TC-DEPT-001 | Checking page heading...');
+    await dept.assertOnPage();
+    console.log('✅ TC-DEPT-001 | Page heading is "Departments".');
 
       // ─── TC-DEPT-002 | Breadcrumbs structure ───────────────────────────────
       console.log('⏳ TC-DEPT-002 | Checking breadcrumbs...');
@@ -368,11 +364,6 @@ test.describe('Departments', () => {
       await expect(page).toHaveURL(/departments\/create/, { timeout: 10_000 });
       console.log('✅ TC-DEPT-035 | "Add New Department" button navigates to create page.');
       await dept.goto();
-
-    } finally {
-      await context.close();
-    }
+      
   });
 });
-
-*/
