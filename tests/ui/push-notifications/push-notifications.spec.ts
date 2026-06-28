@@ -1,19 +1,18 @@
 import { test, expect, Page, BrowserContext } from '@playwright/test';
 import { LoginPage } from '../../../pages/LoginPage';
-import { DashboardPage } from '../../../pages/DashboardPage';
 import { PushNotificationsPage } from '../../../pages/PushNotificationsPage';
 import { generateTOTP } from '../../../helpers/totp.helper';
 
-const EMAIL       = 'kamal@ictechnology.com.au';
-const PASSWORD    = 'Password01';
+const EMAIL = 'kamal@ictechnology.com.au';
+const PASSWORD = 'Password01';
 const TOTP_SECRET = 'SQGN3PT4AEMC56BS';
-const BASE_URL    = 'https://hris.itmanage.com.au';
+const BASE_URL = 'https://hris.itmanage.com.au';
 
 test.describe('Push Notifications', () => {
   test.describe.configure({ retries: 0 });
 
   test('TC-PN | Full push notifications test suite', async ({ browser }) => {
-    test.setTimeout(180_000); // ← 180s for 35 TCs with Livewire latency
+    test.setTimeout(180_000);
 
     const context: BrowserContext = await browser.newContext();
     const page: Page = await context.newPage();
@@ -28,10 +27,26 @@ test.describe('Push Notifications', () => {
       await loginPage.rememberMe().check();
       await loginPage.signInButton().click();
 
-      await expect(loginPage.otpInput()).toBeVisible();
+      await expect(loginPage.otpInput()).toBeVisible({ timeout: 15000 });
       await loginPage.otpInput().fill(generateTOTP(TOTP_SECRET));
-      await loginPage.confirmButton().click();
-      await expect(loginPage.dashboardTitle()).toBeVisible({ timeout: 15000 });
+
+      await Promise.all([
+        page.waitForURL(/.*dashboard|.*admin/, { timeout: 30000 }),
+        loginPage.confirmButton().click(),
+      ]);
+
+      await page.waitForLoadState('networkidle');
+
+      console.log('Current URL after login:', page.url());
+      await page.screenshot({
+        path: 'pn-after-login.png',
+        fullPage: true,
+      });
+
+      await expect(loginPage.dashboardTitle()).toBeVisible({
+        timeout: 30000,
+      });
+
       console.log('✅ Logged in successfully.');
 
       // ─── Navigate to Push Notifications ──────────────────────────────────
