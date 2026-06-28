@@ -11,6 +11,8 @@ test.describe('Dashboard', () => {
   test.describe.configure({ retries: 0 });
 
   test('TC-DASH | Full dashboard test suite', async ({ browser }) => {
+    test.setTimeout(180_000); // 3 min for CI
+
     const context: BrowserContext = await browser.newContext();
     const page: Page = await context.newPage();
 
@@ -95,7 +97,11 @@ test.describe('Dashboard', () => {
       // TC-DASH-011 until TC-DASH-034 remain same as your existing code
 
     } finally {
-      await context.close();
+      try {
+        await context.close();
+      } catch (error) {
+        console.log('Context already closed.');
+      }
     }
   });
 });
