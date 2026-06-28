@@ -8,10 +8,11 @@
     "strict": false,
     "skipLibCheck": true,
     "types": ["node"],
-    "lib": ["ES2020"]
+    "lib": ["ES2020", "dom"]
   },
   "include": [
     "helpers/**/*.ts",
+    "pages/**/*.ts",
     "tests/**/*.ts",
     "playwright.config.ts"
   ]

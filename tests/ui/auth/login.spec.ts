@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures/auth.fixture.js';
+import { test, expect } from '../../../fixtures/auth.fixture';
 
 const BASE_URL = 'https://hris.itmanage.com.au/login';
 
