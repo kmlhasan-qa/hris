@@ -12,6 +12,7 @@ export default defineConfig({
   use: {
     baseURL: HRIS_BASE_URL,
     headless: true,
+    viewport: { width: 1440, height: 900 },
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     trace: 'on-first-retry',
