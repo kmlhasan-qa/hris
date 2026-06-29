@@ -7,7 +7,7 @@ const EMAIL = 'kamal@ictechnology.com.au';
 const PASSWORD = 'Password01';
 const TOTP_SECRET = 'SQGN3PT4AEMC56BS';
 
-export default async function globalSetup() {
+export default async function SetupUI() {
   console.log('🚀 Starting global setup...');
 
   const browser = await chromium.launch({ headless: true });

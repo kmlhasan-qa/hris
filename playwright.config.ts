@@ -4,7 +4,7 @@ import { HRIS_BASE_URL } from './helpers/config';
 export default defineConfig({
   testDir: './tests',
 
-  globalSetup: require.resolve('./global-setup-ui'),
+  globalSetup: require.resolve('./global-setup.ts'),
 
   timeout: 180000,
   retries: 1,
