@@ -1,26 +1,16 @@
-import { test, expect } from '@playwright/test';
-import { PushNotificationsCreatePage } from '../../../pages/PushNotificationsCreatePage';
-import {
-  assertLoggedIn,
-  gotoCreatePushNotification,
-} from './_helpers';
+import { test, expect } from '../../../src/core/fixtures';
 
 test.describe('Push Notifications - Create Validation', () => {
-  test('should validate required fields on submit', async ({ page }) => {
-    await assertLoggedIn(page);
+  test('shows validation errors when submitting an empty form', async ({
+    pushNotificationForm,
+  }) => {
+    await pushNotificationForm.goto();
+    await pushNotificationForm.submit();
 
-    const pn = new PushNotificationsCreatePage(page);
-    await gotoCreatePushNotification(page);
-
-    await pn.submit();
-
-    // ✅ FIXED: no invalid CSS, proper Playwright locators
-    const errorLocator = page
+    const error = pushNotificationForm.page
       .locator('.fi-fo-field-wrp-error-message')
-      .or(page.locator('[role="alert"]'))
-      .or(page.locator('.text-red-500'))
-      .or(page.locator('text=required'));
+      .or(pushNotificationForm.page.getByRole('alert'));
 
-    await expect(errorLocator.first()).toBeVisible({ timeout: 10000 });
+    await expect(error.first()).toBeVisible();
   });
 });

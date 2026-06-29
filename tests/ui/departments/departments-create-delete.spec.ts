@@ -1,70 +1,37 @@
-import { test, expect } from '@playwright/test';
-import { DepartmentsPage } from '../../../pages/DepartmentsPage';
-import { DepartmentsCreatePage } from '../../../pages/DepartmentsCreatePage';
-import {
-  assertLoggedIn,
-  gotoDepartments,
-  gotoCreateDepartment,
-} from './_helpers';
+import { test, expect } from '../../../src/core/fixtures';
 
 test.describe('Departments - Create & Delete', () => {
-  test('TC-DEPT-CREATE-DELETE | Create then delete department successfully', async ({
-    page,
+  test('TC-DEPT-CREATE-DELETE | creates then deletes a department', async ({
+    departments,
+    departmentForm,
   }) => {
-    await assertLoggedIn(page);
-
-    const deptPage = new DepartmentsPage(page);
-    const createPage = new DepartmentsCreatePage(page);
-
     const departmentName = `QA Dept ${Date.now()}`;
 
     // Create
-    await gotoCreateDepartment(page);
+    await departmentForm.gotoCreate();
+    await departmentForm.fillName(departmentName);
+    await departmentForm.selectHeadOfDept('Manager Multi Department');
+    await departmentForm.submit();
 
-    await createPage.fillDepartmentName(departmentName);
-    await createPage.selectHeadOfDept('Manager Multi Department');
+    // Successful create redirects to the edit page.
+    await expect(departmentForm.page).toHaveURL(/\/departments\/\d+\/edit/);
+    await expect(departmentForm.nameInput).toHaveValue(departmentName);
 
-    await createPage.submit();
+    const departmentId = departmentForm.page.url().match(/departments\/(\d+)/)?.[1];
+    expect(departmentId, 'department id should be in the edit URL').toBeTruthy();
 
-    await expect(page).toHaveURL(/\/departments\/\d+\/edit/, {
-      timeout: 30000,
-    });
+    // Verify it appears in the list
+    await departments.goto();
+    await departments.table.filterBy(departmentName);
+    await expect(departments.page.locator('table')).toContainText(departmentName);
 
-    await expect(createPage.departmentNameInput).toHaveValue(departmentName);
+    // Delete from the edit page
+    await departmentForm.gotoEdit(departmentId!);
+    await departmentForm.deleteDepartment();
 
-    // Capture ID BEFORE leaving edit page
-    const currentUrl = page.url();
-    const match = currentUrl.match(/departments\/(\d+)/);
-
-    if (!match) {
-      throw new Error('Department ID not found');
-    }
-
-    const departmentId = match[1];
-
-    // Verify created
-    await gotoDepartments(page);
-
-    console.log('After gotoDepartments:', page.url());
-
-    await deptPage.fillSearch(departmentName);
-
-    await expect(page.locator('table')).toContainText(departmentName);
-
-    // Go back to edit page
-    await createPage.gotoEdit(departmentId);
-
-    await expect(createPage.pageHeading).toBeVisible();
-
-    // Delete
-    await createPage.deleteDepartment();
-
-    // Already redirected by deleteDepartment()
-    await page.waitForLoadState('networkidle');
-
-    // Verify deleted
-    await deptPage.fillSearch(departmentName);
-
-    await expect(page.locator('table')).not.toContainText(departmentName);
+    // Verify it is gone
+    await departments.goto();
+    await departments.table.filterBy(departmentName);
+    await expect(departments.page.locator('table')).not.toContainText(departmentName);
   });
 });

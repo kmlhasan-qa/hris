@@ -1,27 +1,20 @@
-import { test, expect } from '@playwright/test';
-import { assertLoggedIn, gotoCreatePushNotification } from './_helpers';
-import { PushNotificationsCreatePage } from '../../../pages/PushNotificationsCreatePage';
+import { test, expect } from '../../../src/core/fixtures';
 
 test.describe('Push Notifications - Create Form', () => {
-  test('should fill title and body', async ({ page }) => {
-    await assertLoggedIn(page);
-
-    const pn = new PushNotificationsCreatePage(page);
-    await gotoCreatePushNotification(page);
-
-    await pn.fillTitle('Test Notification');
-    await expect(pn.titleInput).toHaveValue('Test Notification');
-
-    await pn.fillBody('This is a test message');
-    await expect(pn.bodyTextarea).toHaveValue('This is a test message');
+  test.beforeEach(async ({ pushNotificationForm }) => {
+    await pushNotificationForm.goto();
   });
 
-  test('should toggle send to all users', async ({ page }) => {
-    await assertLoggedIn(page);
+  test('fills title and body', async ({ pushNotificationForm }) => {
+    await pushNotificationForm.fillTitle('Test Notification');
+    await expect(pushNotificationForm.titleInput).toHaveValue('Test Notification');
 
-    const pn = new PushNotificationsCreatePage(page);
-    await gotoCreatePushNotification(page);
+    await pushNotificationForm.fillBody('This is a test message');
+    await expect(pushNotificationForm.bodyTextarea).toHaveValue('This is a test message');
+  });
 
-    await pn.toggleSendToAll();
+  test('toggles send-to-all', async ({ pushNotificationForm }) => {
+    await pushNotificationForm.toggleSendToAll();
+    await expect(pushNotificationForm.sendToAllToggle).toHaveAttribute('aria-checked', 'true');
   });
 });

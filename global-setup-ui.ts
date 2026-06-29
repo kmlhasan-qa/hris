@@ -1,52 +1,32 @@
 import fs from 'fs';
+import path from 'path';
 import { chromium } from '@playwright/test';
-import { LoginPage } from './pages/LoginPage';
-import { generateTOTP } from './helpers/totp.helper';
+import { LoginPage } from './src/pages/auth/LoginPage';
+import { UI_LOGIN } from './src/config/env';
 
-const EMAIL = 'kamal@ictechnology.com.au';
-const PASSWORD = 'Password01';
-const TOTP_SECRET = 'SQGN3PT4AEMC56BS';
+const AUTH_FILE = 'playwright/.auth/user.json';
 
-export default async function SetupUI() {
-  console.log('🚀 Starting global setup...');
+/**
+ * Authenticate once and persist the session to storageState so every UI spec
+ * starts logged in. Waits on the dashboard heading (real readiness signal)
+ * instead of networkidle / fixed sleeps.
+ */
+export default async function setupUI(): Promise<void> {
+  console.log('🚀 UI global setup: authenticating...');
 
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
-  const loginPage = new LoginPage(page);
+  try {
+    const loginPage = new LoginPage(page);
+    await page.goto(UI_LOGIN.url, { waitUntil: 'domcontentloaded' });
+    await loginPage.login(UI_LOGIN.email, UI_LOGIN.password, UI_LOGIN.totpSecret);
 
-  await loginPage.goto('https://hris.itmanage.com.au/login');
+    fs.mkdirSync(path.dirname(AUTH_FILE), { recursive: true });
+    await page.context().storageState({ path: AUTH_FILE });
 
-  await loginPage.emailInput().fill(EMAIL);
-  await loginPage.passwordInput().fill(PASSWORD);
-  await loginPage.rememberMe().check();
-  await loginPage.signInButton().click();
-
-  await loginPage.otpInput().waitFor({ timeout: 15000 });
-
-  const otp = generateTOTP(TOTP_SECRET);
-  await loginPage.otpInput().fill(otp);
-  await loginPage.confirmButton().click();
-
-  await loginPage.dashboardTitle().waitFor({ timeout: 30000 });
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(5000);
-
-  console.log('Final URL:', page.url());
-
-  const cookies = await page.context().cookies();
-  console.log('Cookies:', cookies.map(c => ({
-    name: c.name,
-    domain: c.domain,
-  })));
-
-  fs.mkdirSync('playwright/.auth', { recursive: true });
-
-  await page.context().storageState({
-    path: 'playwright/.auth/user.json',
-  });
-
-  console.log('✅ Storage state saved.');
-
-  await browser.close();
+    console.log(`✅ Storage state saved to ${AUTH_FILE}`);
+  } finally {
+    await browser.close();
+  }
 }

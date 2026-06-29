@@ -1,34 +1,26 @@
-import { test, expect } from '@playwright/test';
-import { openDashboard } from './_helpers';
+import { test, expect } from '../../../src/core/fixtures';
+import { expectOnDashboard } from '../../../src/assertions/dashboard.assertions';
 
 test.describe('Dashboard Overview', () => {
-  test('TC-DASH-001 | Dashboard page loaded successfully', async ({ page }) => {
-    const d = await openDashboard(page);
-
-    await d.assertOnDashboard();
-
-    console.log('✅ TC-DASH-001 passed');
+  test.beforeEach(async ({ dashboard }) => {
+    await dashboard.goto();
   });
 
-  test('TC-DASH-003 | Search input is functional', async ({ page }) => {
-    const d = await openDashboard(page);
-
-    await expect(d.searchInput).toBeVisible();
-
-    await d.fillSearch('test');
-    await expect(d.searchInput).toHaveValue('test');
-
-    await d.clearSearch();
-    await expect(d.searchInput).toHaveValue('');
-
-    console.log('✅ TC-DASH-003 passed');
+  test('TC-DASH-001 | Dashboard page loaded successfully', async ({ dashboard }) => {
+    await expectOnDashboard(dashboard);
   });
 
-  test('TC-DASH-SIDEBAR | Sidebar visible', async ({ page }) => {
-    const d = await openDashboard(page);
+  test('TC-DASH-003 | Search input is functional', async ({ dashboard }) => {
+    await expect(dashboard.searchInput).toBeVisible();
 
-    await expect(d.sidebar).toBeVisible();
+    await dashboard.fillSearch('test');
+    await expect(dashboard.searchInput).toHaveValue('test');
 
-    console.log('✅ Sidebar visible');
+    await dashboard.clearSearch();
+    await expect(dashboard.searchInput).toHaveValue('');
+  });
+
+  test('TC-DASH-SIDEBAR | Sidebar visible', async ({ dashboard }) => {
+    await expect(dashboard.sidebar.root).toBeVisible();
   });
 });

@@ -1,61 +1,29 @@
-import { test, expect } from '@playwright/test';
-import { PushNotificationsPage } from '../../../pages/PushNotificationsPage';
-import {
-  assertLoggedIn,
-  gotoPushNotificationsList,
-} from './_helpers';
+import { test, expect } from '../../../src/core/fixtures';
 
 test.describe('Push Notifications - Search', () => {
-  test('should allow typing and clearing search', async ({ page }) => {
-    await assertLoggedIn(page);
-
-    const pn = new PushNotificationsPage(page);
-    await gotoPushNotificationsList(page);
-
-    await pn.fillSearch('test');
-    await expect(pn.searchInput).toHaveValue('test');
-
-    await pn.clearSearch();
-    await expect(pn.searchInput).toHaveValue('');
+  test.beforeEach(async ({ pushNotifications }) => {
+    await pushNotifications.goto();
   });
 
-  test('should return results for valid search', async ({ page }) => {
-    await assertLoggedIn(page);
+  test('allows typing and clearing the search field', async ({ pushNotifications }) => {
+    await pushNotifications.table.filterBy('test');
+    await expect(pushNotifications.table.search).toHaveValue('test');
 
-    const pn = new PushNotificationsPage(page);
-    await gotoPushNotificationsList(page);
-
-    await pn.fillSearch('test');
-
-    await expect.poll(async () => pn.getRowCount(), {
-      timeout: 10000,
-    }).toBeGreaterThan(0);
-
-    const firstTitle = await pn.getRowTitleByIndex(0);
-    expect(firstTitle.length).toBeGreaterThan(0);
-
-    await pn.clearSearch();
+    await pushNotifications.table.clearSearch();
+    await expect(pushNotifications.table.search).toHaveValue('');
   });
 
-  test('should show empty state for invalid search', async ({ page }) => {
-    await assertLoggedIn(page);
+  test('returns results for a valid query', async ({ pushNotifications }) => {
+    await pushNotifications.table.filterBy('test');
 
-    const pn = new PushNotificationsPage(page);
-    await gotoPushNotificationsList(page);
+    await expect.poll(() => pushNotifications.table.rowCount()).toBeGreaterThan(0);
+    expect((await pushNotifications.title(0)).length).toBeGreaterThan(0);
 
-    await pn.fillSearch('zzzxxx_no_match_9999');
+    await pushNotifications.table.clearSearch();
+  });
 
-    const emptyState = page.locator(
-      '.fi-ta-empty-state, [class*="empty"], [role="status"]'
-    );
-
-    await expect.poll(async () => {
-      const rows = await pn.getRowCount();
-      const emptyVisible = await emptyState.isVisible().catch(() => false);
-
-      return rows === 0 || emptyVisible;
-    }, {
-      timeout: 10000,
-    }).toBeTruthy();
+  test('shows an empty state for a non-matching query', async ({ pushNotifications }) => {
+    await pushNotifications.table.filterBy('zzzxxx_no_match_9999');
+    await expect.poll(() => pushNotifications.table.hasNoResults()).toBe(true);
   });
 });

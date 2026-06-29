@@ -1,23 +1,11 @@
-import { test, expect } from '@playwright/test';
-import { PushNotificationsPage } from '../../../pages/PushNotificationsPage';
-import {
-  assertLoggedIn,
-  gotoPushNotificationsList,
-} from './_helpers';
+import { test, expect } from '../../../src/core/fixtures';
 
 test.describe('Push Notifications - Navigation', () => {
-  test('should navigate via Send New button', async ({ page }) => {
-    await assertLoggedIn(page);
+  test('navigates to the create page via the Send New button', async ({ pushNotifications }) => {
+    await pushNotifications.goto();
 
-    const pn = new PushNotificationsPage(page);
-    await gotoPushNotificationsList(page);
+    await pushNotifications.clickSendNew();
 
-    const href = await pn.sendNewButton.getAttribute('href');
-
-    await pn.sendNewButton.click();
-
-    await expect(page).toHaveURL(/push-notifications\/create/);
-
-    console.log('Navigated to:', href);
+    await expect(pushNotifications.page).toHaveURL(/push-notifications\/create/);
   });
 });

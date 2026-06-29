@@ -1,39 +1,23 @@
-import { test, expect } from '@playwright/test';
-import { DepartmentsPage } from '../../../pages/DepartmentsPage';
-import { assertLoggedIn, gotoDepartments } from './_helpers';
+import { test, expect } from '../../../src/core/fixtures';
 
 test.describe('Departments - Table', () => {
-  test('should render table with valid data', async ({ page }) => {
-    await assertLoggedIn(page);
-
-    const dept = new DepartmentsPage(page);
-    await gotoDepartments(page);
-
-    const rowCount = await dept.getRowCount();
-    expect(rowCount).toBeGreaterThan(0);
+  test.beforeEach(async ({ departments }) => {
+    await departments.goto();
   });
 
-  test('should have non-empty department names', async ({ page }) => {
-    await assertLoggedIn(page);
+  test('renders the table with at least one row', async ({ departments }) => {
+    expect(await departments.table.rowCount()).toBeGreaterThan(0);
+  });
 
-    const dept = new DepartmentsPage(page);
-    await gotoDepartments(page);
-
-    const rowCount = await dept.getRowCount();
+  test('shows non-empty department names', async ({ departments }) => {
+    const rowCount = await departments.table.rowCount();
 
     for (let i = 0; i < Math.min(rowCount, 3); i++) {
-      const name = await dept.getRowDepartmentNameByIndex(i);
-      expect(name.length).toBeGreaterThan(0);
+      expect((await departments.departmentName(i)).length).toBeGreaterThan(0);
     }
   });
 
-  test('should show enabled status icons', async ({ page }) => {
-    await assertLoggedIn(page);
-
-    const dept = new DepartmentsPage(page);
-    await gotoDepartments(page);
-
-    const row = await dept.getRowByIndex(0);
-    await expect(row.locator('td.fi-ta-cell-is-enabled svg')).toBeVisible();
+  test('shows the enabled status icon', async ({ departments }) => {
+    await expect(departments.enabledIcon(0)).toBeVisible();
   });
 });

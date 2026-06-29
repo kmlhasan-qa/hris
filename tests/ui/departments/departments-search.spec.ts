@@ -1,89 +1,32 @@
-import { test, expect } from '@playwright/test';
-import { DepartmentsPage } from '../../../pages/DepartmentsPage';
-import { assertLoggedIn, gotoDepartments } from './_helpers';
+import { test, expect } from '../../../src/core/fixtures';
 
 test.describe('Departments - Search', () => {
-  test('should allow typing and clearing search', async ({ page }) => {
-    await assertLoggedIn(page);
-
-    const dept = new DepartmentsPage(page);
-    await gotoDepartments(page);
-
-    await dept.fillSearch('test');
-
-    await expect(dept.searchInput).toHaveValue('test');
-
-    await dept.clearSearch();
-
-    await expect(dept.searchInput).toHaveValue('');
+  test.beforeEach(async ({ departments }) => {
+    await departments.goto();
   });
 
-  test('should return results for valid search', async ({ page }) => {
-    await assertLoggedIn(page);
+  test('allows typing and clearing the search field', async ({ departments }) => {
+    await departments.table.filterBy('test');
+    await expect(departments.table.search).toHaveValue('test');
 
-    const dept = new DepartmentsPage(page);
-    await gotoDepartments(page);
-
-    await dept.fillSearch('department');
-
-    // 🔥 wait for UI to stabilize (no flaky timeout)
-    await expect.poll(async () => await dept.getRowCount(), {
-      timeout: 10000,
-    }).toBeGreaterThan(0);
-
-    const count = await dept.getRowCount();
-    expect(count).toBeGreaterThan(0);
-
-    // 🔥 SAFE assertion: only validate UI has valid data
-    const firstName = await dept.getRowDepartmentNameByIndex(0);
-    expect(firstName.length).toBeGreaterThan(0);
-
-    await dept.clearSearch();
-
-    await expect.poll(async () => await dept.getRowCount(), {
-      timeout: 10000,
-    }).toBeGreaterThanOrEqual(0);
+    await departments.table.clearSearch();
+    await expect(departments.table.search).toHaveValue('');
   });
 
-  test('should show empty state for invalid search', async ({ page }) => {
-    await assertLoggedIn(page);
+  test('returns results for a valid query', async ({ departments }) => {
+    await departments.table.filterBy('department');
 
-    const dept = new DepartmentsPage(page);
-    await gotoDepartments(page);
+    await expect.poll(() => departments.table.rowCount()).toBeGreaterThan(0);
+    expect((await departments.departmentName(0)).length).toBeGreaterThan(0);
 
-    await dept.fillSearch('zzzxxx_no_match_9999');
+    await departments.table.clearSearch();
+  });
 
-    // 🔥 stable condition: either no rows OR empty UI state
-    await expect.poll(
-      async () => {
-        const rows = await dept.getRowCount();
+  test('shows an empty state for a non-matching query', async ({ departments }) => {
+    await departments.table.filterBy('zzzxxx_no_match_9999');
 
-        const emptyState = page.locator(
-          '.fi-ta-empty-state, [class*="empty"]'
-        );
+    await expect.poll(() => departments.table.hasNoResults()).toBe(true);
 
-        const emptyVisible = await emptyState
-          .isVisible()
-          .catch(() => false);
-
-        return rows === 0 || emptyVisible;
-      },
-      {
-        timeout: 10000,
-      }
-    ).toBeTruthy();
-
-    const count = await dept.getRowCount();
-
-    const emptyState = page.locator('.fi-ta-empty-state, [class*="empty"]');
-    const emptyVisible = await emptyState.isVisible().catch(() => false);
-
-    expect(count === 0 || emptyVisible).toBeTruthy();
-
-    await dept.clearSearch();
-
-    await expect.poll(async () => await dept.getRowCount(), {
-      timeout: 10000,
-    }).toBeGreaterThanOrEqual(0);
+    await departments.table.clearSearch();
   });
 });

@@ -1,21 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { PushNotificationsPage } from '../../../pages/PushNotificationsPage';
-import {
-  assertLoggedIn,
-  gotoPushNotificationsList,
-} from './_helpers';
+import { test } from '../../../src/core/fixtures';
+import { expectPushNotificationsLanding } from '../../../src/assertions/pushNotifications.assertions';
 
 test.describe('Push Notifications - Page', () => {
-  test('should load page correctly', async ({ page }) => {
-    await assertLoggedIn(page);
-
-    const pn = new PushNotificationsPage(page);
-    await gotoPushNotificationsList(page);
-
-    await pn.assertOnPage();
-    await pn.assertBreadcrumbs();
-
-    await expect(pn.sendNewButton).toBeVisible();
-    await expect(pn.searchInput).toBeVisible();
+  test('loads the page with its core controls', async ({ pushNotifications }) => {
+    await pushNotifications.goto();
+    await expectPushNotificationsLanding(pushNotifications);
   });
 });

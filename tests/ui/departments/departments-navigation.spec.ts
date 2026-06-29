@@ -1,32 +1,24 @@
-import { test, expect } from '@playwright/test';
-import { DepartmentsPage } from '../../../pages/DepartmentsPage';
-import { assertLoggedIn, gotoDepartments } from './_helpers';
+import { test, expect } from '../../../src/core/fixtures';
 
 test.describe('Departments - Filters', () => {
-  test('should open and close filter panel', async ({ page }) => {
-    await assertLoggedIn(page);
-
-    const dept = new DepartmentsPage(page);
-    await gotoDepartments(page);
-
-    await dept.openFilter();
-    await expect(dept.filterPanel).toBeVisible();
-
-    await dept.closeFilter();
-    await expect(dept.filterPanel).not.toBeVisible();
+  test.beforeEach(async ({ departments }) => {
+    await departments.goto();
   });
 
-  test('should show filter controls', async ({ page }) => {
-    await assertLoggedIn(page);
+  test('opens and closes the filter panel', async ({ departments }) => {
+    await departments.filters.open();
+    await expect(departments.filters.panel).toBeVisible();
 
-    const dept = new DepartmentsPage(page);
-    await gotoDepartments(page);
+    await departments.filters.close();
+    await expect(departments.filters.panel).not.toBeVisible();
+  });
 
-    await dept.openFilter();
+  test('shows the filter controls', async ({ departments }) => {
+    await departments.filters.open();
 
-    await expect(dept.filterHeadOfDeptSelect).toBeVisible();
-    await expect(dept.filterStatusSelect).toBeVisible();
-    await expect(dept.filterApplyButton).toBeVisible();
-    await expect(dept.filterResetButton).toBeVisible();
+    await expect(departments.filterHeadOfDeptSelect).toBeVisible();
+    await expect(departments.filterStatusSelect).toBeVisible();
+    await expect(departments.filters.applyButton).toBeVisible();
+    await expect(departments.filters.resetButton).toBeVisible();
   });
 });
