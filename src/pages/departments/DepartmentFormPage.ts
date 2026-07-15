@@ -51,7 +51,9 @@ export class DepartmentFormPage extends BasePage {
 
     // Searching is debounced + server-side; wait on the Livewire round-trip
     // rather than sleeping, then on the option becoming visible.
-    await waitForLivewire(this.page, () => this.headOfDeptSearchInput.fill(name));
+    await waitForLivewire(this.page, () => this.headOfDeptSearchInput.fill(name), {
+      strict: true,
+    });
 
     const option = this.page
       .locator('[role="option"], .fi-select-input-dropdown li')

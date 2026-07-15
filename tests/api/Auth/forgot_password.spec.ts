@@ -32,7 +32,6 @@ test.describe('Forgot Password API', () => {
 
     if (!otp) {
       test.skip(true, 'OTP not generated from mail server');
-      return;
     }
 
     console.log('OTP generated successfully:', otp);
@@ -44,12 +43,13 @@ test.describe('Forgot Password API', () => {
 
     if (!otp) {
       test.skip(true, 'OTP not generated from mail server');
-      return;
     }
+
+    const code = otp as string;
 
     const response = await verifyResetCode(request, {
       email: REGISTERED_EMAIL,
-      code: otp,
+      code,
       password: NEW_PASSWORD,
     });
 

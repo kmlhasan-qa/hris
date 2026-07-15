@@ -48,10 +48,6 @@ test.describe('Get Notification By Public ID API', () => {
     request,
   }) => {
     const token = requireToken();
-    if (!token) {
-      console.log('Skipping test: token unavailable');
-      return;
-    }
 
     const listResponse = await getNotifications(request, {
       ...authHeaders(token),
@@ -126,10 +122,6 @@ test.describe('Get Notification By Public ID API', () => {
     request,
   }) => {
     const token = requireToken();
-    if (!token) {
-      console.log('Skipping test: token unavailable');
-      return;
-    }
 
     const response = await getNotificationById(
       request,

@@ -13,9 +13,21 @@ export function authHeaders(token?: string | null, json = false): Record<string,
   return headers;
 }
 
-/** Parse a JSON body, falling back to an empty object on non-JSON / empty responses. */
-export function parseBody(response: APIResponse): Promise<any> {
-  return response.json().catch(() => ({}));
+/**
+ * Parse a response body as JSON.
+ * Returns an empty object for an empty body, but fails fast on malformed JSON.
+ */
+export async function parseBody(response: APIResponse): Promise<any> {
+  const raw = await response.text();
+  if (!raw.trim()) return {};
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new Error(
+      `Expected JSON response but received invalid payload [${response.status()} ${response.url()}]: ${raw.slice(0, 200)}`
+    );
+  }
 }
 
 /** Skip the current test when no auth token is available, otherwise return it. */

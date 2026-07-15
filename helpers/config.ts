@@ -19,9 +19,9 @@ export interface HrisLoginAccount {
 /** Primary automation account used by global setup and the login spec. */
 export const PRIMARY_ACCOUNT: HrisLoginAccount = {
   name: 'Automation Manager',
-  email: env.HRIS_EMAIL ?? 'manager@mailsac.com',
-  password: env.HRIS_PASSWORD ?? 'Password01!',
-  totpSecret: env.HRIS_TOTP_SECRET ?? '53YLFR3WAR2HKSG5',
+  email: 'manager@mailsac.com',
+  password: 'Newpass01234!',
+  totpSecret: '53YLFR3WAR2HKSG5',
 };
 
 /** mail.tm mailbox used to retrieve password-reset OTP emails. */

@@ -36,11 +36,11 @@ export class FilamentFilters {
   }
 
   async apply(): Promise<void> {
-    await waitForLivewire(this.page, () => this.applyButton.click());
+    await waitForLivewire(this.page, () => this.applyButton.click(), { strict: true });
   }
 
   async reset(): Promise<void> {
-    await waitForLivewire(this.page, () => this.resetButton.click());
+    await waitForLivewire(this.page, () => this.resetButton.click(), { strict: true });
   }
 
   async badgeCount(): Promise<number> {

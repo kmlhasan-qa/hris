@@ -2,13 +2,11 @@ import { loginAndSaveAuthToken } from './helpers/auth.helper';
 import { PRIMARY_ACCOUNT } from './helpers/config';
 
 export default async function SetupAPI() {
-  try {
-    const token = await loginAndSaveAuthToken(PRIMARY_ACCOUNT);
+  const token = await loginAndSaveAuthToken(PRIMARY_ACCOUNT);
 
-    if (!token) {
-      console.log('Global setup: auth token unavailable.');
-    }
-  } catch (error) {
-    console.log('Global setup failed:', error);
+  if (!token) {
+    throw new Error(
+      'Global setup failed: auth token unavailable. Check API credentials and 2FA secret in environment configuration.'
+    );
   }
 }

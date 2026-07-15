@@ -32,11 +32,11 @@ export class FilamentTable {
 
   // ── Search ────────────────────────────────────────────────────────────────
   async filterBy(text: string): Promise<void> {
-    await waitForLivewire(this.page, () => this.search.fill(text));
+    await waitForLivewire(this.page, () => this.search.fill(text), { strict: true });
   }
 
   async clearSearch(): Promise<void> {
-    await waitForLivewire(this.page, () => this.search.fill(''));
+    await waitForLivewire(this.page, () => this.search.fill(''), { strict: true });
     await expect(this.search).toHaveValue('');
   }
 
@@ -66,8 +66,10 @@ export class FilamentTable {
   }
 
   async sortBy(columnKey: string): Promise<void> {
-    await waitForLivewire(this.page, () =>
-      this.header(columnKey).locator('.fi-ta-header-cell-sort-btn').click(),
+    await waitForLivewire(
+      this.page,
+      () => this.header(columnKey).locator('.fi-ta-header-cell-sort-btn').click(),
+      { strict: true }
     );
   }
 
@@ -83,17 +85,19 @@ export class FilamentTable {
   }
 
   async goToNextPage(): Promise<void> {
-    await waitForLivewire(this.page, () => this.nextPageButton.click());
+    await waitForLivewire(this.page, () => this.nextPageButton.click(), { strict: true });
   }
 
   async goToPage(pageNumber: number): Promise<void> {
-    await waitForLivewire(this.page, () =>
-      this.paginationItems.filter({ hasText: String(pageNumber) }).first().click(),
+    await waitForLivewire(
+      this.page,
+      () => this.paginationItems.filter({ hasText: String(pageNumber) }).first().click(),
+      { strict: true }
     );
   }
 
   async setPerPage(value: '5' | '10' | '25' | '50'): Promise<void> {
-    await waitForLivewire(this.page, () => this.perPageSelect.selectOption(value));
+    await waitForLivewire(this.page, () => this.perPageSelect.selectOption(value), { strict: true });
   }
 
   async activePage(): Promise<number> {

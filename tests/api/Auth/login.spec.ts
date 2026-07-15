@@ -89,18 +89,15 @@ test.describe('Login API', () => {
 
       console.log('login response status:', loginRes.status());
 
-      if (loginRes.status() !== 200) {
-        console.log('Skipping test: login failed');
-        return;
-      }
+      test.skip(
+        loginRes.status() !== 200,
+        `Login precondition failed with status ${loginRes.status()} while preparing invalid-2FA scenario`
+      );
 
       const loginBody = await loginRes.json().catch(() => ({}));
       const tempToken = loginBody.temp_token || loginBody.data?.temp_token;
 
-      if (!tempToken) {
-        console.log('Skipping test: temp token unavailable');
-        return;
-      }
+      test.skip(!tempToken, 'Temp token unavailable after successful login precondition');
 
       const verifyRes = await ctx.post('/api/auth/2fa/verify', {
         headers: {

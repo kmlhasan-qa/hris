@@ -14,10 +14,10 @@ test.describe('Team Attendance Detail API', () => {
   const NOT_HEAD_DEPARTMENT_ID = '01KN124C4AKWAED6V1JEP7P7K2';
 
   const DEFAULT_QUERY = {
-    from: '2026-05-01',
+    from: '2026-05-05',
     month: '2026-05',
     to: '2026-05-31',
-    date: '2026-05-01',
+    date: '2026-05-05',
   };
 
   const INVALID_DEPARTMENT_MESSAGE = /Not a valid department/i;
@@ -64,7 +64,8 @@ test.describe('Team Attendance Detail API', () => {
     const { response, body } = await getTeamAttendanceDetail(
       request,
       DEPARTMENT_PUBLIC_ID,
-      authHeaders(token, true)
+      authHeaders(token, true),
+      DEFAULT_QUERY
     );
 
     await logResponse('team attendance detail response', body, response.status());
