@@ -17,7 +17,7 @@ test.describe('Team Attendance Detail API', () => {
     from: '2026-05-05',
     month: '2026-05',
     to: '2026-05-31',
-    date: '2026-05-05',
+    date: '2026-07-15',
   };
 
   const INVALID_DEPARTMENT_MESSAGE = /Not a valid department/i;
